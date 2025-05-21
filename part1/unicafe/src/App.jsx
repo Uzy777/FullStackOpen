@@ -33,8 +33,8 @@ const App = () => {
       <p>Neutral: {neutral}</p>
       <p>Bad: {bad}</p>
       <p>All: {good + neutral + bad}</p>
-      <p>Average: {(good + -bad) / total}</p>
-      <p>Positive: {(good / total) * 100} %</p>
+      <p>Average: {(good - bad) / total}</p>
+      <p>Positive: {(good * 100) / total} %</p>
 
       {/* <Display feedbackName="Good" /> */}
     </div>
