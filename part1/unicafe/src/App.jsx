@@ -1,12 +1,22 @@
 import { useState } from "react";
 
-// const Button = ({ onClick, text }) => {
-//   return <button onClick={onClick}>{text}</button>;
-// };
+const Button = ({ handleButtonClick, text }) => {
+  return <button onClick={handleButtonClick[text.toLowerCase()]}>{text}</button>;
+};
 
 // const Display = (props) => {
 //   return <div>{props.feedbackName} {props.feedbackName}</div>;
 // };
+
+const StatisticLine = ({ text, value }) => {
+  return (
+    <div>
+      <p>
+        {text}: {value}
+      </p>
+    </div>
+  );
+};
 
 const Statistics = ({ good, neutral, bad }) => {
   // Calculations
@@ -24,12 +34,12 @@ const Statistics = ({ good, neutral, bad }) => {
 
   return (
     <div>
-      <p>Good: {good}</p>
-      <p>Neutral: {neutral}</p>
-      <p>Bad: {bad}</p>
-      <p>All: {totalValue}</p>
-      <p>Average: {averageValue}</p>
-      <p>Positive: {positiveValue} %</p>
+      <StatisticLine text="Good" value={good} />
+      <StatisticLine text="Neutral" value={neutral} />
+      <StatisticLine text="Bad" value={bad} />
+      <StatisticLine text="All" value={totalValue} />
+      <StatisticLine text="Average" value={averageValue} />
+      <StatisticLine text="Positive" value={positiveValue + " %"} />
     </div>
   );
 };
@@ -40,13 +50,19 @@ const App = () => {
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
 
+  const handleButtonClick = {
+    good: () => setGood(good + 1),
+    neutral: () => setNeutral(neutral + 1),
+    bad: () => setBad(bad + 1),
+  };
+
   return (
     <div>
       <h1>Give Feedback:</h1>
       {/* Button Clicks */}
-      <button onClick={() => setGood(good + 1)}>Good</button>
-      <button onClick={() => setNeutral(neutral + 1)}>Neutral</button>
-      <button onClick={() => setBad(bad + 1)}>Bad</button>
+      <Button handleButtonClick={handleButtonClick} text="Good" />
+      <Button handleButtonClick={handleButtonClick} text="Neutral" />
+      <Button handleButtonClick={handleButtonClick} text={"Bad"} />
       <h1>Statistics:</h1>
       <Statistics good={good} neutral={neutral} bad={bad} />
     </div>
