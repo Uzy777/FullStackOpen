@@ -7,6 +7,14 @@ const App = () => {
     setSelected(random);
   };
 
+  const handleVotes = () => {
+    const votesCopy = [...votes];
+
+    // const add = (votes += 1);
+    votesCopy[selected] += 1;
+    setVotes(votesCopy);
+  };
+
   const anecdotes = [
     "If it hurts, do it more often.",
     "Adding manpower to a late software project makes it later!",
@@ -18,11 +26,16 @@ const App = () => {
     "The only way to go fast, is to go well.",
   ];
 
+  const initialVotes = new Array(anecdotes.length).fill(0);
+
   const [selected, setSelected] = useState(0);
+  const [votes, setVotes] = useState(initialVotes);
 
   return (
     <div>
       <p>{anecdotes[selected]}</p>
+      <p>Has {votes[selected]} votes</p>
+      <button onClick={handleVotes}>Vote</button>
       <button onClick={randomAnecdotes}>Next Anecdote</button>
     </div>
   );
