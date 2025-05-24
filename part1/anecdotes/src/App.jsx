@@ -31,12 +31,25 @@ const App = () => {
   const [selected, setSelected] = useState(0);
   const [votes, setVotes] = useState(initialVotes);
 
+  const maxVoteIndex = votes.indexOf(Math.max(...votes));
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
       <p>Has {votes[selected]} votes</p>
       <button onClick={handleVotes}>Vote</button>
       <button onClick={randomAnecdotes}>Next Anecdote</button>
+
+      {votes[maxVoteIndex] > 0 ? (
+        <div>
+          <h1>Anecdote with most votes</h1>
+          <p>{anecdotes[maxVoteIndex]}</p>
+          <p>Has {votes[maxVoteIndex]} votes </p>
+        </div>
+      ) : (
+        <p>No vote found!</p>
+      )}
     </div>
   );
 };
