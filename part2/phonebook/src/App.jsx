@@ -20,6 +20,16 @@ const App = () => {
     setNewName("");
   };
 
+  const nameExists = persons.some((person) => person.name === newName);
+
+  function nameExist() {
+    if (nameExists) {
+      alert(`${newName} is already added to the phonebook`);
+      setNewName("");
+      return;
+    }
+  }
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -28,7 +38,9 @@ const App = () => {
           name: <input value={newName} onChange={handleNameChange} />
         </div>
         <div>
-          <button type="submit">Add</button>
+          <button type="submit" onClick={nameExist}>
+            Add
+          </button>
         </div>
       </form>
       <h2>Numbers</h2>
