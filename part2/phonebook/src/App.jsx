@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 
 const App = () => {
+  const [serverPersons, setServerPersons] = useState([]);
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456", id: 1 },
     { name: "Ada Lovelace", number: "39-44-5323523", id: 2 },
@@ -14,6 +16,15 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [newSearch, setNewSearch] = useState("");
   const [allPersons, setAllPersons] = useState([...persons]);
+
+  useEffect(() => {
+    console.log("testing");
+    axios.get("http://localhost:3001/persons").then((response) => {
+      console.log("successful");
+      setServerPersons(response.data);
+    });
+  }, []);
+  console.log("render", serverPersons, "persons");
 
   const handleNameChange = (event) => {
     console.log(event.target.value);
@@ -52,7 +63,9 @@ const App = () => {
     const searchValue = event.target.value;
     setNewSearch(searchValue);
 
-    const filtered = allPersons.filter((person) => person.name.toLowerCase().includes(searchValue.toLowerCase()));
+    const filtered = allPersons.filter((person) =>
+      person.name.toLowerCase().includes(searchValue.toLowerCase())
+    );
     setPersons(filtered);
 
     if (searchValue === "") {
@@ -64,7 +77,13 @@ const App = () => {
       <h2>Phonebook</h2>
       <Filter value={newSearch} onChange={handleSearchChange} />
       <h2>Add a new record</h2>
-      <PersonForm onSubmit={addName} newName={newName} handleNameChange={handleNameChange} newNumber={newNumber} handleNumberChange={handleNumberChange} />
+      <PersonForm
+        onSubmit={addName}
+        newName={newName}
+        handleNameChange={handleNameChange}
+        newNumber={newNumber}
+        handleNumberChange={handleNumberChange}
+      />
 
       <h2>Numbers</h2>
       <Persons persons={persons} />
