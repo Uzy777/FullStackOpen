@@ -3,10 +3,10 @@ import App from './App'
 
 import axios from 'axios'
 
-const promise = axios.get('http://localhost:3001/notes')
+const promise = axios.get('http://localhost:5173/notes')
 console.log(promise)
 
-const promise2 = axios.get('http://localhost:3001/foobar')
+const promise2 = axios.get('http://localhost:5173/foobar')
 console.log(promise2)
 
 
