@@ -3,6 +3,7 @@ import axios from "axios";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import personService from "./services/persons";
 
 const App = () => {
   const [serverPersons, setServerPersons] = useState([]);
@@ -18,11 +19,16 @@ const App = () => {
   const [allPersons, setAllPersons] = useState([...persons]);
 
   useEffect(() => {
-    console.log("testing");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("successful");
+    personService.getAll().then((response) => {
+      console.log("sucessful - backend");
       setServerPersons(response.data);
     });
+
+    // console.log("testing");
+    // axios.get("http://localhost:3001/persons").then((response) => {
+    //   console.log("successful");
+    //   setServerPersons(response.data);
+    // });
   }, []);
   console.log("render", serverPersons, "persons");
 
