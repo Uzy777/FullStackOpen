@@ -54,12 +54,14 @@ const App = () => {
       number: newNumber,
     };
 
-    setPersons(persons.concat(nameObject));
-    setAllPersons(allPersons.concat(nameObject));
+    // setPersons(persons.concat(nameObject));
+    // setAllPersons(allPersons.concat(nameObject));
     setNewName("");
     setNewNumber("");
 
     axios.post("http://localhost:3001/persons", nameObject).then((response) => {
+      setPersons(persons.concat(response.data));
+      setAllPersons(allPersons.concat(response.data));
       console.log(response);
     });
   };
@@ -82,6 +84,17 @@ const App = () => {
       setPersons(allPersons);
     }
   };
+
+  const deleteEntry = (id) => {
+    console.log(id);
+    axios.delete(`http://localhost:3001/persons/${id}`, id).then((response) => {
+      console.log(`deleted ${id}`);
+      console.log(response);
+
+      setPersons(persons.filter((person) => person.id !== id)); // refresh
+    });
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -96,7 +109,7 @@ const App = () => {
       />
 
       <h2>Numbers</h2>
-      <Persons persons={persons} />
+      <Persons persons={persons} onDelete={deleteEntry} />
     </div>
   );
 };
