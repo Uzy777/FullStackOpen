@@ -1,4 +1,12 @@
-const PersonForm = ({ onSubmit, newName, handleNameChange, newNumber, handleNumberChange }) => {
+const PersonForm = ({
+  onSubmit,
+  newName,
+  handleNameChange,
+  newNumber,
+  handleNumberChange,
+  onUpdate,
+  persons,
+}) => {
   return (
     <form onSubmit={onSubmit}>
       <div>
@@ -8,7 +16,26 @@ const PersonForm = ({ onSubmit, newName, handleNameChange, newNumber, handleNumb
         Number: <input value={newNumber} onChange={handleNumberChange} />
       </div>
       <div>
-        <button type="submit">Add</button>
+        <button
+          onClick={(e) => {
+            const existingPerson = persons.find((p) => p.name === newName);
+
+            if (existingPerson) {
+              e.preventDefault();
+              const confirmUpdate = window.confirm(
+                `${newName} is already added to phonebook, replace the old number with a new one?`
+              );
+
+              if (confirmUpdate) {
+                const updatedPerson = { ...existingPerson, number: newNumber };
+                onUpdate(existingPerson.id, updatedPerson);
+              }
+            }
+          }}
+          type="submit"
+        >
+          Add
+        </button>
       </div>
     </form>
   );

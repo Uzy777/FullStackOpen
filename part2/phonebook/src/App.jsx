@@ -95,6 +95,18 @@ const App = () => {
     });
   };
 
+  const updateNumber = (id, updatedPerson) => {
+    console.log(id);
+    axios
+      .put(`http://localhost:3001/persons/${id}`, updatedPerson)
+      .then((response) => {
+        console.log(`updated number for ${id}`);
+        console.log(response);
+
+        setPersons(persons.map((p) => (p.id !== id ? p : response.data)));
+      });
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -106,6 +118,8 @@ const App = () => {
         handleNameChange={handleNameChange}
         newNumber={newNumber}
         handleNumberChange={handleNumberChange}
+        onUpdate={updateNumber}
+        persons={persons}
       />
 
       <h2>Numbers</h2>
