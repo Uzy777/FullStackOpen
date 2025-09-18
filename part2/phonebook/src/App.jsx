@@ -21,12 +21,13 @@ const App = () => {
     const [newSearch, setNewSearch] = useState("");
     const [allPersons, setAllPersons] = useState([...persons]);
     const [updateMessage, setUpdateMessage] = useState("");
+    const [messageType, setMessageType] = useState("success"); // 'success' or 'error'
 
     useEffect(() => {
         personService.getAll().then((response) => {
             console.log("sucessful - backend");
-            setPersons(response.data)
-            setAllPersons(response.data)
+            setPersons(response.data);
+            setAllPersons(response.data);
             // setServerPersons(response.data);
         });
 
@@ -70,6 +71,7 @@ const App = () => {
             setAllPersons(allPersons.concat(response.data));
             console.log(response);
 
+            setMessageType("success");
             setUpdateMessage(`Added ${response.data.name}`);
 
             // Clear message after 5 seconds
@@ -108,25 +110,37 @@ const App = () => {
 
     const updateNumber = (id, updatedPerson) => {
         console.log(id);
-        axios.put(`http://localhost:3001/persons/${id}`, updatedPerson).then((response) => {
-            console.log(`updated number for ${id}`);
-            console.log(response);
+        axios
+            .put(`http://localhost:3001/persons/${id}`, updatedPerson)
+            .then((response) => {
+                console.log(`updated number for ${id}`);
+                console.log(response);
 
-            setPersons(persons.map((p) => (p.id !== id ? p : response.data)));
+                setPersons(persons.map((p) => (p.id !== id ? p : response.data)));
 
-            setUpdateMessage(`Updated number for ${response.data.name}`);
+                setMessageType("success");
+                setUpdateMessage(`Updated number for ${response.data.name}`);
 
-            // Clear message after 5 seconds
-            setTimeout(() => {
-                setUpdateMessage("");
-            }, 5000);
-        });
+                // Clear message after 5 seconds
+                setTimeout(() => {
+                    setUpdateMessage("");
+                }, 5000);
+            })
+            .catch((error) => {
+                const person = persons.find((p) => p.id === id);
+                setMessageType("error");
+                setUpdateMessage(`Information of ${person?.name || "this person"} has already been removed from server`);
+
+                setTimeout(() => {
+                    setUpdateMessage("");
+                }, 5000);
+            });
     };
 
     return (
         <div>
             <h2>Phonebook</h2>
-            <Notification message={updateMessage} />
+            <Notification message={updateMessage} type={messageType} />
             <Filter value={newSearch} onChange={handleSearchChange} />
             <h2>Add a new record</h2>
             <PersonForm
@@ -138,7 +152,6 @@ const App = () => {
                 onUpdate={updateNumber}
                 persons={persons}
             />
-
             <h2>Numbers</h2>
             <Persons persons={persons} onDelete={deleteEntry} />
         </div>
