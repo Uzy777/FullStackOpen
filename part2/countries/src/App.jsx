@@ -7,24 +7,36 @@ const App = () => {
     const [country, setCountry] = useState(null);
     const [updateMessage, setUpdateMessage] = useState("");
     const [selectedCountry, setSelectedCountry] = useState(null);
+    const [currentWeather, setCurrentWeather] = useState("");
+
+    const api_key = import.meta.env.VITE_OPEN_WEATHER_KEY;
 
     useEffect(() => {
-        axios.get("https://studies.cs.helsinki.fi/restcountries/api/all").then((response) => setAllCountries(response.data));
+        axios
+            .get("https://studies.cs.helsinki.fi/restcountries/api/all")
+            .then((response) => setAllCountries(response.data))
+            .catch((error) => console.error("Countries API error:", error));
     }, []);
 
-    //     axios
-    //         .get(`https://studies.cs.helsinki.fi/restcountries/api/name/${country}`)
-    //         .then((response) => {
-    //             console.log(response.data);
-    //             console.log("found");
-    //         })
-    //         .catch((error) => {
-    //             console.log("no matches found");
-    //             setUpdateMessage("Too many matches, specify another filter")
-    //         });
-    // }, [country]);
+    useEffect(() => {
+        if (!selectedCountry) return; // <-- guard clause
+
+        const [lat, lon] = selectedCountry.capitalInfo.latlng || []; // safe destructuring
+        if (lat === undefined || lon === undefined) return; // another safety check
+
+        axios
+            .get(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${api_key}&units=metric`)
+            .then((response) => setCurrentWeather(response.data))
+            .catch((error) => console.error("Weather API error:", error));
+    }, [selectedCountry, api_key]);
 
     const filtered = allCountries.filter((country) => country.name.common.toLowerCase().includes(value.toLowerCase()));
+
+    useEffect(() => {
+        if (filtered.length === 1 && !selectedCountry) {
+            setSelectedCountry(filtered[0]);
+        }
+    }, [filtered]);
 
     const handleChange = (event) => {
         setValue(event.target.value);
@@ -81,6 +93,15 @@ const App = () => {
                         ))}
                     </div>
                 ) : null}
+                {selectedCountry && currentWeather && (
+                    <div>
+                        <h2>Weather in {selectedCountry.capital}</h2>
+                        <p>Temperature: {currentWeather.main.temp} Celsius</p>
+
+                        <img src={`http://openweathermap.org/img/wn/${currentWeather.weather[0].icon}@2x.png`} alt={currentWeather.weather[0].description} />
+                        <p>Wind: {currentWeather.wind.speed} m/s</p>
+                    </div>
+                )}
             </form>
         </div>
     );
