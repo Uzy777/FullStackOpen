@@ -31,8 +31,18 @@ app.get("/", (request, response) => {
     response.send("<h1>Phonebook Application</h1>");
 });
 
+app.get("/info", (request, response) => {
+    const entriesCount = persons.length;
+    const date = new Date().toString();
+
+    response.send(
+        `<p>Phonebook has info for ${entriesCount} people.</p>
+        <p>${date}</p>`
+    );
+});
+
 app.get("/api/persons", (request, response) => {
-    response.json(persons);
+    response.json(`persons`);
 });
 
 const PORT = 3001;
