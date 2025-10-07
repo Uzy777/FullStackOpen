@@ -70,6 +70,33 @@ app.delete("/api/persons/:id", (request, response) => {
     response.status(204).end();
 });
 
+// POST REQUESTS //
+
+// Post new phonebook entry
+const generateId = () => {
+    return String(Math.floor(Math.random() * (1000000 - 0 + 1) + 0));
+};
+
+app.post("/api/persons", (request, response) => {
+    const body = request.body;
+
+    if (!body.name) {
+        return response.status(400).json({
+            error: "content missing",
+        });
+    }
+
+    const person = {
+        name: body.name,
+        number: body.number || false,
+        id: generateId(),
+    };
+
+    persons = persons.concat(person);
+
+    response.json(person);
+});
+
 const PORT = 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
