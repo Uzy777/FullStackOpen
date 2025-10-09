@@ -1,5 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 
 const app = express();
 
@@ -10,6 +11,7 @@ morgan.token("postData", (request, response) => {
     return "";
 });
 
+app.use(cors());
 app.use(express.json());
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :postData"));
 
@@ -54,7 +56,7 @@ app.get("/info", (request, response) => {
 
 // Get for all persons
 app.get("/api/persons", (request, response) => {
-    response.json(`persons`);
+    response.json(persons);
 });
 
 // Get for a person ID
