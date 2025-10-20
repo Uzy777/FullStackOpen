@@ -72,15 +72,21 @@ app.get("/api/persons", (request, response) => {
 
 // Get for a person ID
 app.get("/api/persons/:id", (request, response) => {
-    const id = request.params.id;
-    const person = persons.find((person) => person.id === id);
-
-    if (person) {
+    Person.findById(request.params.id).then((person) => {
         response.json(person);
-    } else {
-        response.status(404).end();
-    }
+    });
 });
+
+// app.get("/api/persons/:id", (request, response) => {
+//     const id = request.params.id;
+//     const person = persons.find((person) => person.id === id);
+
+//     if (person) {
+//         response.json(person);
+//     } else {
+//         response.status(404).end();
+//     }
+// });
 
 // DELETE REQUESTS //
 
@@ -95,33 +101,50 @@ app.delete("/api/persons/:id", (request, response) => {
 // POST REQUESTS //
 
 // Post new phonebook entry
-const generateId = () => {
-    return String(Math.floor(Math.random() * (1000000 - 0 + 1) + 0));
-};
-
 app.post("/api/persons", (request, response) => {
     const body = request.body;
 
-    if (!body.name || !body.number) {
-        return response.status(400).json({
-            error: "content missing",
-        });
-    } else if (persons.some((person) => person.name === body.name)) {
-        return response.status(400).json({
-            error: "name must be unique",
-        });
+    if (!body.name) {
+        return response.status(400).json({ error: "content missing" });
     }
 
-    const person = {
+    const person = new Person({
         name: body.name,
-        number: body.number || false,
-        id: generateId(),
-    };
+        number: body.number,
+    });
 
-    persons = persons.concat(person);
-
-    response.json(person);
+    person.save().then((savedPerson) => {
+        response.json(savedPerson);
+    });
 });
+
+// const generateId = () => {
+//     return String(Math.floor(Math.random() * (1000000 - 0 + 1) + 0));
+// };
+
+// app.post("/api/persons", (request, response) => {
+//     const body = request.body;
+
+//     if (!body.name || !body.number) {
+//         return response.status(400).json({
+//             error: "content missing",
+//         });
+//     } else if (persons.some((person) => person.name === body.name)) {
+//         return response.status(400).json({
+//             error: "name must be unique",
+//         });
+//     }
+
+//     const person = {
+//         name: body.name,
+//         number: body.number || false,
+//         id: generateId(),
+//     };
+
+//     persons = persons.concat(person);
+
+//     response.json(person);
+// });
 
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
