@@ -3,29 +3,7 @@ const cors = require("cors");
 
 const app = express();
 
-const mongoose = require("mongoose");
-
-// DO NOT SAVE YOUR PASSWORD TO GITHUB!!
-const password = process.argv[2];
-const url = `mongodb+srv://fullstack:${password}@cluster0.di8eqb3.mongodb.net/noteApp?retryWrites=true&w=majority&appName=Cluster0`;
-
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
-
-const noteSchema = new mongoose.Schema({
-    content: String,
-    important: Boolean,
-});
-
-noteSchema.set("toJSON", {
-    transform: (document, returnedObject) => {
-        returnedObject.id = returnedObject._id.toString();
-        delete returnedObject._id;
-        delete returnedObject.__v;
-    },
-});
-
-const Note = mongoose.model("Note", noteSchema);
+const Note = require("./models/note");
 
 app.get("/api/notes", (request, response) => {
     Note.find({}).then((notes) => {
