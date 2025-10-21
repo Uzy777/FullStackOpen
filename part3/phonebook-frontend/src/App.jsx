@@ -66,7 +66,7 @@ const App = () => {
         setNewName("");
         setNewNumber("");
 
-        axios.post("http://localhost:3001/persons", nameObject).then((response) => {
+        axios.post("http://localhost:3001/api/persons", nameObject).then((response) => {
             setPersons(persons.concat(response.data));
             setAllPersons(allPersons.concat(response.data));
             console.log(response);
@@ -100,7 +100,7 @@ const App = () => {
 
     const deleteEntry = (id) => {
         console.log(id);
-        axios.delete(`http://localhost:3001/persons/${id}`, id).then((response) => {
+        axios.delete(`http://localhost:3001/api/persons/${id}`, id).then((response) => {
             console.log(`deleted ${id}`);
             console.log(response);
 
@@ -111,7 +111,7 @@ const App = () => {
     const updateNumber = (id, updatedPerson) => {
         console.log(id);
         axios
-            .put(`http://localhost:3001/persons/${id}`, updatedPerson)
+            .put(`http://localhost:3001/api/persons/${id}`, updatedPerson)
             .then((response) => {
                 console.log(`updated number for ${id}`);
                 console.log(response);
