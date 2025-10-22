@@ -68,27 +68,14 @@ app.get("/api/persons", (request, response, next) => {
         .catch((error) => next(error));
 });
 
-// app.get("/api/persons", (request, response) => {
-//     response.json(persons);
-// });
-
 // Get for a person ID
-app.get("/api/persons/:id", (request, response) => {
-    Person.findById(request.params.id).then((person) => {
-        response.json(person);
-    });
+app.get("/api/persons/:id", (request, response, next) => {
+    Person.findById(request.params.id)
+        .then((person) => {
+            response.json(person);
+        })
+        .catch((error) => next(error));
 });
-
-// app.get("/api/persons/:id", (request, response) => {
-//     const id = request.params.id;
-//     const person = persons.find((person) => person.id === id);
-
-//     if (person) {
-//         response.json(person);
-//     } else {
-//         response.status(404).end();
-//     }
-// });
 
 // DELETE REQUESTS //
 
@@ -100,13 +87,6 @@ app.delete("/api/persons/:id", (request, response, next) => {
         })
         .catch((error) => next(error));
 });
-
-// app.delete("/api/persons/:id", (request, response) => {
-//     const id = request.params.id;
-//     persons = persons.filter((person) => person.id !== id);
-
-//     response.status(204).end();
-// });
 
 // POST REQUESTS //
 
@@ -131,34 +111,6 @@ app.post("/api/persons", (request, response, next) => {
         .catch((error) => next(error));
 });
 
-// const generateId = () => {
-//     return String(Math.floor(Math.random() * (1000000 - 0 + 1) + 0));
-// };
-
-// app.post("/api/persons", (request, response) => {
-//     const body = request.body;
-
-//     if (!body.name || !body.number) {
-//         return response.status(400).json({
-//             error: "content missing",
-//         });
-//     } else if (persons.some((person) => person.name === body.name)) {
-//         return response.status(400).json({
-//             error: "name must be unique",
-//         });
-//     }
-
-//     const person = {
-//         name: body.name,
-//         number: body.number || false,
-//         id: generateId(),
-//     };
-
-//     persons = persons.concat(person);
-
-//     response.json(person);
-// });
-
 // PUT REQUESTS
 
 // Change number for existing person name
@@ -181,8 +133,28 @@ app.put("/api/persons/:id", (request, response, next) => {
         .catch((error) => next(error));
 });
 
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: "unknown endpoint" });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+
+    if (error.name === "CastError") {
+        return response.status(400).send({ error: "malformatted id" });
+    } else if (error.name === "ValidationError") {
+        return response.status(400).json({ error: error.message });
+    }
+
+    next(error);
+};
+
+// this has to be the last loaded middleware, also all the routes should be registered before this!
+app.use(errorHandler);
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
-
