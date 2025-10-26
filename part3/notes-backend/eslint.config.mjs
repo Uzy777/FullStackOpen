@@ -11,6 +11,7 @@ export default [
             globals: { ...globals.node },
             ecmaVersion: "latest",
         },
+
         plugins: { "@stylistic/js": stylisticJs },
         rules: {
             "@stylistic/js/indent": ["error", 2],
@@ -18,5 +19,8 @@ export default [
             "@stylistic/js/quotes": ["error", "single"],
             "@stylistic/js/semi": ["error", "never"],
         },
+    },
+    {
+        ignores: ["dist/**"],
     },
 ];
