@@ -89,4 +89,9 @@ describe("total likes", () => {
         const result = listHelper.mostBlogs(blogs);
         assert.deepStrictEqual(result.blogs, 3);
     });
+
+    test("returns the author with most amount of likes on blogs", () => {
+        const result = listHelper.mostLikes(blogs);
+        assert.deepStrictEqual(result.likes, 17);
+    });
 });
