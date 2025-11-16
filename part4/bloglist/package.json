@@ -4,14 +4,18 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "test": "node --test",
-        "dev": "node --watch index.js"
+        "test": "cross-env NODE_ENV=test node --test",
+        "dev": "cross-env NODE_ENV=development node --watch index.js"
     },
     "author": "Uzy",
     "license": "ISC",
     "dependencies": {
+        "cross-env": "^10.1.0",
         "dotenv": "^17.2.3",
         "express": "^5.1.0",
         "mongoose": "^8.19.2"
+    },
+    "devDependencies": {
+        "supertest": "^7.1.4"
     }
 }
