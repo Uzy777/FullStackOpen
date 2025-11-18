@@ -53,4 +53,23 @@ blogsRouter.delete("/:id", async (request, response) => {
     response.status(204).end();
 });
 
+blogsRouter.put("/:id", (request, response) => {
+    const { title, author, url, likes } = request.body;
+
+    Blog.findById(request.params.id).then((blog) => {
+        if (!blog) {
+            return response.status(404).end();
+        }
+
+        blog.title = title;
+        blog.author = author;
+        blog.url = url;
+        blog.likes = likes;
+
+        return blog.save().then((updatedBlog) => {
+            response.json(updatedBlog);
+        });
+    });
+});
+
 module.exports = blogsRouter;
