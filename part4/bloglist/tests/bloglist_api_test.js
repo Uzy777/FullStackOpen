@@ -4,21 +4,23 @@ const mongoose = require("mongoose");
 const supertest = require("supertest");
 const app = require("../app");
 
+const helper = require("./test_helper");
+
 const Blog = require("../models/blog");
 
 const api = supertest(app);
 
-const initialBlogs = [
-    { title: "Youtube the Start", author: "Google", url: "https://www.youtube.com", likes: 2 },
-    { title: "Learning is good", author: "David Rodger", url: "https://www.fullstackopen.com", likes: 139123 },
-];
+// beforeEach(async () => {
+//     await Blog.deleteMany({});
+//     let blogObject = new Blog(initialBlogs[0]);
+//     await blogObject.save();
+//     blogObject = new Blog(initialBlogs[1]);
+//     await blogObject.save();
+// });
 
 beforeEach(async () => {
     await Blog.deleteMany({});
-    let blogObject = new Blog(initialBlogs[0]);
-    await blogObject.save();
-    blogObject = new Blog(initialBlogs[1]);
-    await blogObject.save();
+    await Blog.insertMany(helper.initialBlogs);
 });
 
 test("blogs are returned as json", async () => {
@@ -28,24 +30,22 @@ test("blogs are returned as json", async () => {
         .expect("Content-Type", /application\/json/);
 });
 
-test("correct number of blogs is returned", async () => {
+test("all blogs are returned", async () => {
     const response = await api.get("/api/blogs");
 
-    // Log to see what is actually returned
-    console.log("Returned blogs:", response.body);
+    assert.strictEqual(response.body.length, helper.initialBlogs.length);
+});
 
-    // Check the number of blogs
-    if (!Array.isArray(response.body)) {
-        throw new Error("Response body is not an array");
-    }
+test("a specific blog can be viewed", async () => {
+    const blogsAtStart = await helper.blogsInDb();
+    const blogToView = blogsAtStart[0];
 
-    if (response.body.length !== initialBlogs.length) {
-        console.log("Expected:", initialBlogs.length);
-        console.log("Got:", response.body.length);
-    }
+    const resultBlog = await api
+        .get(`/api/blogs/${blogToView.id}`)
+        .expect(200)
+        .expect("Content-Type", /application\/json/);
 
-    // Final assertion
-    assert.strictEqual(response.body.length, initialBlogs.length);
+    assert.deepStrictEqual(resultBlog.body, blogToView);
 });
 
 after(async () => {
