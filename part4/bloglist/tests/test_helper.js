@@ -9,7 +9,7 @@ const initialBlogs = [
 const initialUsers = [
     {
         username: "root",
-        passwordHash: "xxx",
+        password: "sekret",
     },
 ];
 
