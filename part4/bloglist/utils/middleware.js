@@ -1,5 +1,8 @@
 const logger = require("./logger");
 
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
+
 const requestLogger = (request, response, next) => {
     logger.info("Method:", request.method);
     logger.info("Path:  ", request.path);
@@ -9,13 +12,36 @@ const requestLogger = (request, response, next) => {
 };
 
 const tokenExtractor = (request, response, next) => {
-    const authorisation = request.get("authorization"); // header key
-    if (authorisation && authorisation.startsWith("Bearer ")) {
-        request.token = authorisation.replace("Bearer ", "");
+    const authorization = request.get("authorization");
+    if (authorization && authorization.startsWith("Bearer ")) {
+        request.token = authorization.replace("Bearer ", "");
     } else {
-        request.token = null; // if no token found
+        request.token = null;
     }
-    next(); // move to the next middleware or route
+    next();
+};
+
+const userExtractor = async (request, response, next) => {
+    const authorization = request.get("authorization");
+    if (!authorization || !authorization.toLowerCase().startsWith("bearer ")) {
+        return response.status(401).json({ error: "token missing" });
+    }
+
+    const token = authorization.substring(7);
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(token, process.env.SECRET);
+    } catch {
+        return response.status(401).json({ error: "token invalid" });
+    }
+
+    const user = await User.findById(decodedToken.id);
+    if (!user) {
+        return response.status(401).json({ error: "user not found" });
+    }
+
+    request.user = user;
+    next();
 };
 
 const unknownEndpoint = (request, response) => {
@@ -42,6 +68,7 @@ const errorHandler = (error, request, response, next) => {
 module.exports = {
     requestLogger,
     tokenExtractor,
+    userExtractor,
     unknownEndpoint,
     errorHandler,
 };

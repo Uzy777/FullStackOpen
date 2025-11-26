@@ -4,6 +4,8 @@ const User = require("../models/user");
 
 const jwt = require("jsonwebtoken");
 
+const { userExtractor } = require("../utils/middleware");
+
 // blogsRouter.get("/", (request, response) => {
 //     Blog.find({}).then((blogs) => {
 //         response.json(blogs);
@@ -32,24 +34,9 @@ blogsRouter.get("/:id", async (request, response) => {
 //     });
 // });
 
-blogsRouter.post("/", async (request, response) => {
+blogsRouter.post("/", userExtractor, async (request, response) => {
     const body = request.body;
-
-    if (!request.token) {
-        return response.status(401).json({ error: "token missing" });
-    }
-
-    let decodedToken;
-    try {
-        decodedToken = jwt.verify(request.token, process.env.SECRET);
-    } catch (err) {
-        return response.status(401).json({ error: "token invalid" });
-    }
-
-    const user = await User.findById(decodedToken.id);
-    if (!user) {
-        return response.status(400).json({ error: "userId missing or not valid" });
-    }
+    const user = request.user;
 
     const blog = new Blog({
         url: body.url,
@@ -66,19 +53,8 @@ blogsRouter.post("/", async (request, response) => {
     response.status(201).json(savedBlog);
 });
 
-blogsRouter.delete("/:id", async (request, response) => {
-    if (!request.token) {
-        return response.status(401).json({ error: "token missing" });
-    }
-
-    let decodedToken;
-    try {
-        decodedToken = jwt.verify(request.token, process.env.SECRET);
-    } catch (error) {
-        return response.status(401).json({ error: "token invalid" });
-    }
-
-    const userId = decodedToken.id; // <-- FIXED
+blogsRouter.delete("/:id", userExtractor, async (request, response) => {
+    const user = request.user; // \u2705 already available
 
     const blog = await Blog.findById(request.params.id);
     if (!blog) {
@@ -89,7 +65,7 @@ blogsRouter.delete("/:id", async (request, response) => {
         return response.status(400).json({ error: "blog has no associated user" });
     }
 
-    if (blog.user.toString() !== userId.toString()) {
+    if (blog.user.toString() !== user._id.toString()) {
         return response.status(403).json({ error: "only the creator can delete this blog" });
     }
 
