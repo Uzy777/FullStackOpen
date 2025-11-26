@@ -32,8 +32,6 @@ blogsRouter.get("/:id", async (request, response) => {
 //     });
 // });
 
-
-
 blogsRouter.post("/", async (request, response) => {
     const body = request.body;
 
@@ -69,6 +67,32 @@ blogsRouter.post("/", async (request, response) => {
 });
 
 blogsRouter.delete("/:id", async (request, response) => {
+    if (!request.token) {
+        return response.status(401).json({ error: "token missing" });
+    }
+
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(request.token, process.env.SECRET);
+    } catch (error) {
+        return response.status(401).json({ error: "token invalid" });
+    }
+
+    const userId = decodedToken.id; // <-- FIXED
+
+    const blog = await Blog.findById(request.params.id);
+    if (!blog) {
+        return response.status(404).json({ error: "blog not found" });
+    }
+
+    if (!blog.user) {
+        return response.status(400).json({ error: "blog has no associated user" });
+    }
+
+    if (blog.user.toString() !== userId.toString()) {
+        return response.status(403).json({ error: "only the creator can delete this blog" });
+    }
+
     await Blog.findByIdAndDelete(request.params.id);
     response.status(204).end();
 });
