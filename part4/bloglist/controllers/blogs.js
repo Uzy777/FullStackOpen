@@ -32,25 +32,23 @@ blogsRouter.get("/:id", async (request, response) => {
 //     });
 // });
 
-const getTokenFrom = (request) => {
-    const authorisation = request.get("authorisation");
-    if (authorisation && authorisation.startsWith("Bearer ")) {
-        return authorisation.replace("Bearer ", "");
-    }
-    return null;
-};
+
 
 blogsRouter.post("/", async (request, response) => {
     const body = request.body;
 
-    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
-    if (!decodedToken.id) {
+    if (!request.token) {
+        return response.status(401).json({ error: "token missing" });
+    }
+
+    let decodedToken;
+    try {
+        decodedToken = jwt.verify(request.token, process.env.SECRET);
+    } catch (err) {
         return response.status(401).json({ error: "token invalid" });
     }
 
     const user = await User.findById(decodedToken.id);
-
-    // Validation
     if (!user) {
         return response.status(400).json({ error: "userId missing or not valid" });
     }
