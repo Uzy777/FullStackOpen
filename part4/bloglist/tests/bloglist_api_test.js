@@ -7,6 +7,7 @@ const app = require("../app");
 const helper = require("./test_helper");
 
 const Blog = require("../models/blog");
+const User = require("../models/user");
 
 const api = supertest(app);
 
@@ -21,6 +22,8 @@ const api = supertest(app);
 beforeEach(async () => {
     await Blog.deleteMany({});
     await Blog.insertMany(helper.initialBlogs);
+    await User.deleteMany({});
+    await User.insertMany(helper.initialUsers);
 });
 
 test("blogs are returned as json", async () => {
@@ -146,6 +149,18 @@ test("a blog can be updated", async () => {
     const updatedBlog = blogsAtEnd.find((b) => b.id === blogToUpdate.id);
 
     assert.strictEqual(updatedBlog.likes, updatedData.likes);
+});
+
+test("username and password must be at least 3 chars", async () => {
+    const newUser = {
+        username: "ab",
+        password: "12",
+    };
+
+    await api.post("/api/users").send(newUser).expect(400);
+
+    const usersAtEnd = await helper.usersInDb();
+    assert.strictEqual(usersAtEnd.length, helper.initialUsers.length);
 });
 
 after(async () => {
