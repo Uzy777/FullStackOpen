@@ -66,6 +66,7 @@ const App = () => {
 
         try {
             const user = await loginService.login({ username, password });
+            noteService.setToken(user.token);
             setUser(user);
             setUsername("");
             setPassword("");
@@ -123,10 +124,10 @@ const App = () => {
                     <Note key={note.id} note={note} toggleImportance={() => toggleImportanceOf(note.id)} />
                 ))}
             </ul>
-            <form onSubmit={addNote}>
+            {/* <form onSubmit={addNote}>
                 <input value={newNote} onChange={handleNoteChange} />
                 <button type="submit">save</button>
-            </form>
+            </form> */}
             <Footer />
         </div>
     );
