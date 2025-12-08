@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
 import Notification from "./components/Notification";
+import AddBlog from "./components/AddBlog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -16,6 +17,8 @@ const App = () => {
 
     const [message, setMessage] = useState(null);
     const [messageType, setMessageType] = useState(null);
+
+    const [blogVisible, setBlogVisible] = useState(false);
 
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -34,9 +37,7 @@ const App = () => {
         event.preventDefault();
         try {
             const user = await loginService.login({ username, password });
-
             window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
-
             setUser(user);
             setUsername("");
             setPassword("");
@@ -60,11 +61,12 @@ const App = () => {
             setMessage(`a new blog "${returnedBlog.title}" by ${returnedBlog.author} added`);
             setTimeout(() => setMessage(null), 5000);
 
-            // clear inputs
             setTitle("");
             setAuthor("");
             setUrl("");
-        } catch (error) {
+
+            setBlogVisible(false);
+        } catch {
             setMessageType("error");
             setMessage("could not create blog");
             setTimeout(() => setMessage(null), 5000);
@@ -98,7 +100,7 @@ const App = () => {
             <Notification message={message} type={messageType} />
 
             <p>
-                {user.name} logged in
+                {user.name} logged in{" "}
                 <button
                     onClick={() => {
                         window.localStorage.removeItem("loggedBlogappUser");
@@ -109,26 +111,23 @@ const App = () => {
                 </button>
             </p>
 
-            <h2>create new</h2>
+            {/* Toggle Form Visibility */}
+            {!blogVisible && <button onClick={() => setBlogVisible(true)}>create new blog</button>}
 
-            <form onSubmit={addBlog}>
+            {blogVisible && (
                 <div>
-                    title:
-                    <input value={title} onChange={({ target }) => setTitle(target.value)} />
+                    <AddBlog
+                        addBlog={addBlog}
+                        title={title}
+                        author={author}
+                        url={url}
+                        handleTitleChange={({ target }) => setTitle(target.value)}
+                        handleAuthorChange={({ target }) => setAuthor(target.value)}
+                        handleUrlChange={({ target }) => setUrl(target.value)}
+                    />
+                    <button onClick={() => setBlogVisible(false)}>cancel</button>
                 </div>
-
-                <div>
-                    author:
-                    <input value={author} onChange={({ target }) => setAuthor(target.value)} />
-                </div>
-
-                <div>
-                    url:
-                    <input value={url} onChange={({ target }) => setUrl(target.value)} />
-                </div>
-
-                <button type="submit">create</button>
-            </form>
+            )}
 
             <br />
 
