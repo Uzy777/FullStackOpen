@@ -1,23 +1,32 @@
 import { useState } from "react";
+import blogService from "../services/blogs";
 
 const Blog = ({ blog }) => {
-    // Step 1: local state to track visibility
     const [visible, setVisible] = useState(false);
 
-    // Step 2: function to toggle visibility
+    const [likes, setLikes] = useState(blog.likes);
+
     const toggleVisibility = () => setVisible(!visible);
 
-    // Step 3: basic inline style
-    const blogStyle = {
-        paddingTop: 10,
-        paddingLeft: 2,
-        border: "solid",
-        borderWidth: 1,
-        marginBottom: 5,
+    const handleLike = async () => {
+        try {
+            const updatedBlog = {
+                user: blog.user ? blog.user._id : null,
+                likes: likes + 1,
+                author: blog.author,
+                title: blog.title,
+                url: blog.url,
+            };
+
+            const returnedBlog = await blogService.update(blog.id, updatedBlog);
+            setLikes(returnedBlog.likes);
+        } catch (error) {
+            console.error("Error updating likes:", error);
+        }
     };
 
     return (
-        <div style={blogStyle}>
+        <div style={{ paddingTop: 10, paddingLeft: 2, border: "solid", borderWidth: 1, marginBottom: 5 }}>
             <div>
                 {blog.title} {blog.author}
                 <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
@@ -27,9 +36,9 @@ const Blog = ({ blog }) => {
                 <div>
                     <div>{blog.url}</div>
                     <div>
-                        likes {blog.likes} <button>like</button>
+                        likes {likes} <button onClick={handleLike}>like</button>
                     </div>
-                    <div>{blog.author}</div>
+                    <div>{blog.user ? blog.user.name : "Unknown user"}</div>
                 </div>
             )}
         </div>
