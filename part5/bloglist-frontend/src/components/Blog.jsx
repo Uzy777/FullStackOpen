@@ -1,17 +1,18 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog }) => {
+const Blog = ({ blog, user, handleDelete }) => {
     const [visible, setVisible] = useState(false);
-
     const [likes, setLikes] = useState(blog.likes);
+
+    const isOwner = blog.user?.username === user?.username;
 
     const toggleVisibility = () => setVisible(!visible);
 
     const handleLike = async () => {
         try {
             const updatedBlog = {
-                user: blog.user ? blog.user._id : null,
+                user: blog.user ? blog.user.id : null,
                 likes: likes + 1,
                 author: blog.author,
                 title: blog.title,
@@ -28,8 +29,7 @@ const Blog = ({ blog }) => {
     return (
         <div style={{ paddingTop: 10, paddingLeft: 2, border: "solid", borderWidth: 1, marginBottom: 5 }}>
             <div>
-                {blog.title} {blog.author}
-                <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
+                {blog.title} {blog.author} <button onClick={toggleVisibility}>{visible ? "hide" : "view"}</button>
             </div>
 
             {visible && (
@@ -38,7 +38,13 @@ const Blog = ({ blog }) => {
                     <div>
                         likes {likes} <button onClick={handleLike}>like</button>
                     </div>
-                    <div>{blog.user ? blog.user.name : "Unknown user"}</div>
+                    <div>{blog.user?.name || "Unknown user"}</div>
+
+                    {isOwner && (
+                        <button style={{ backgroundColor: "red" }} onClick={() => handleDelete(blog)}>
+                            remove
+                        </button>
+                    )}
                 </div>
             )}
         </div>
