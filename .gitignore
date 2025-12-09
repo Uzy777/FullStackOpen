@@ -28,3 +28,4 @@ dist-ssr
 # Custom
 package-lock.json
 .env
+coverage/
