@@ -1,43 +1,33 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import Togglable from "./Togglable";
+import Note from "./Note";
 
-describe("<Togglable />", () => {
-    beforeEach(() => {
-        render(
-            <Togglable buttonLabel="show...">
-                <div>togglable content</div>
-            </Togglable>
-        );
-    });
+test("renders content", () => {
+    const note = {
+        content: "Component testing is done with react-testing-library",
+        important: true,
+    };
 
-    test("renders its children", () => {
-        screen.getByText("togglable content");
-    });
+    render(<Note note={note} />);
 
-    test("at start the children are not displayed", () => {
-        const element = screen.getByText("togglable content");
-        expect(element).not.toBeVisible();
-    });
+    const element = screen.getByText("Component testing is done with react-testing-library");
 
-    test("after clicking the button, children are displayed", async () => {
-        const user = userEvent.setup();
-        const button = screen.getByText("show...");
-        await user.click(button);
+    expect(element).toBeDefined();
+});
 
-        const element = screen.getByText("togglable content");
-        expect(element).toBeVisible();
-    });
+test("clicking the button calls event handler once", async () => {
+    const note = {
+        content: "Component testing is done with react-testing-library",
+        important: true,
+    };
 
-    test("toggled content can be closed", async () => {
-        const user = userEvent.setup();
-        const button = screen.getByText("show...");
-        await user.click(button);
+    const mockHandler = vi.fn();
 
-        const closeButton = screen.getByText("cancel");
-        await user.click(closeButton);
+    render(<Note note={note} toggleImportance={mockHandler} />);
 
-        const element = screen.getByText("togglable content");
-        expect(element).not.toBeVisible();
-    });
+    const user = userEvent.setup();
+    const button = screen.getByText("make not important");
+    await user.click(button);
+
+    expect(mockHandler.mock.calls).toHaveLength(1);
 });
