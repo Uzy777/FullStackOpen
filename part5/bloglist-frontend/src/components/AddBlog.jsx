@@ -4,19 +4,19 @@ const AddBlog = ({ addBlog, title, author, url, handleTitleChange, handleAuthorC
             <div>
                 <label>
                     title:
-                    <input value={title} onChange={handleTitleChange} />
+                    <input placeholder="title" value={title} onChange={handleTitleChange} />
                 </label>
             </div>
             <div>
                 <label>
                     author:
-                    <input value={author} onChange={handleAuthorChange} />
+                    <input placeholder="author" value={author} onChange={handleAuthorChange} />
                 </label>
             </div>
             <div>
                 <label>
                     url:
-                    <input value={url} onChange={handleUrlChange} />
+                    <input placeholder="url" value={url} onChange={handleUrlChange} />
                 </label>
             </div>
             <button type="submit">create</button>

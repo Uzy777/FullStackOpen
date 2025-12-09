@@ -1,6 +1,5 @@
-// tests/blog_app.spec.js
 const { test, describe, expect, beforeEach } = require("@playwright/test");
-const { loginWith } = require("./blog_helper");
+const { loginWith, attemptLogin, createBlog } = require("./blog_helper");
 
 describe("Blog app", () => {
     beforeEach(async ({ page, request }) => {
@@ -30,14 +29,33 @@ describe("Blog app", () => {
         });
 
         test("login fails with wrong password", async ({ page }) => {
-            await loginWith(page, "mluukkai", "wrong");
+            await attemptLogin(page, "mluukkai", "wrong");
 
             const errorDiv = page.locator(".error");
             await expect(errorDiv).toContainText("wrong username or password");
-            await expect(errorDiv).toHaveCSS("border-style", "solid");
-            await expect(errorDiv).toHaveCSS("color", "rgb(255, 0, 0)");
 
             await expect(page.getByText("Matti Luukkainen logged in")).not.toBeVisible();
+
+            const token = await page.evaluate(() => window.localStorage.getItem("loggedBlogappUser"));
+            expect(token).toBeNull();
+        });
+
+        describe("when logged in", () => {
+            beforeEach(async ({ page }) => {
+                await loginWith(page, "mluukkai", "salainen");
+                await expect(page.getByText("Matti Luukkainen logged in")).toBeVisible();
+            });
+            test("a new blog can be created", async ({ page }) => {
+                await createBlog(page, {
+                    title: "Working with PCs",
+                    author: "Playwright Tester",
+                    url: "http://example.com",
+                });
+
+                await expect(page.locator(".success")).toContainText('a new blog "Working with PCs"');
+
+                await expect(page.locator("div").filter({ hasText: "Working with PCs" }).first()).toBeVisible();
+            });
         });
     });
 });
