@@ -2,16 +2,22 @@ const AddBlog = ({ addBlog, title, author, url, handleTitleChange, handleAuthorC
     return (
         <form onSubmit={addBlog}>
             <div>
-                title:
-                <input value={title} onChange={handleTitleChange} />
+                <label>
+                    title:
+                    <input value={title} onChange={handleTitleChange} />
+                </label>
             </div>
             <div>
-                author:
-                <input value={author} onChange={handleAuthorChange} />
+                <label>
+                    author:
+                    <input value={author} onChange={handleAuthorChange} />
+                </label>
             </div>
             <div>
-                url:
-                <input value={url} onChange={handleUrlChange} />
+                <label>
+                    url:
+                    <input value={url} onChange={handleUrlChange} />
+                </label>
             </div>
             <button type="submit">create</button>
         </form>
