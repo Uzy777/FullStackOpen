@@ -1,0 +1,24 @@
+{
+    "name": "fullstackopen",
+    "version": "1.0.0",
+    "description": "FullStackOpen - Course",
+    "main": "index.js",
+    "scripts": {
+        "test": "playwright test",
+        "test:report": "playwright show-report"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Uzy777/FullStackOpen.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/Uzy777/FullStackOpen/issues"
+    },
+    "homepage": "https://github.com/Uzy777/FullStackOpen#readme",
+    "devDependencies": {
+        "@playwright/test": "^1.57.0",
+        "@types/node": "^24.10.2"
+    }
+}
