@@ -1,6 +1,10 @@
-const { test, describe, expect } = require("@playwright/test");
+const { test, describe, expect, beforeEach } = require("@playwright/test");
 
 describe("Note app", () => {
+    beforeEach(async ({ page }) => {
+        await page.goto("http://localhost:5173");
+    });
+
     test("front page can be opened", async ({ page }) => {
         await page.goto("http://localhost:5173");
 
@@ -17,7 +21,7 @@ describe("Note app", () => {
         await page.getByLabel("password").fill("salainen");
 
         await page.getByRole("button", { name: "login" }).click();
-        
+
         await expect(page.getByText("Matti Luukkainen logged in")).toBeVisible();
     });
 });
