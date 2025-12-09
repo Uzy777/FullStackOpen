@@ -45,6 +45,7 @@ describe("Blog app", () => {
                 await loginWith(page, "mluukkai", "salainen");
                 await expect(page.getByText("Matti Luukkainen logged in")).toBeVisible();
             });
+
             test("a new blog can be created", async ({ page }) => {
                 await createBlog(page, {
                     title: "Working with PCs",
@@ -52,10 +53,41 @@ describe("Blog app", () => {
                     url: "http://example.com",
                 });
 
-                await expect(page.locator(".success")).toContainText('a new blog "Working with PCs"');
+                const success = page.locator(".success");
+                await expect(success).toContainText('a new blog "Working with PCs"');
 
                 await expect(page.locator("div").filter({ hasText: "Working with PCs" }).first()).toBeVisible();
             });
+
+            // test("a blog can be liked", async ({ page }) => {
+            //     // Create a new blog
+            //     await createBlog(page, {
+            //         title: "Test Blog for Liking",
+            //         author: "Playwright Tester",
+            //         url: "http://playwright.test/blog",
+            //     });
+
+            //     // Locate the blog by its title
+            //     const blog = page.locator("text=Test Blog for Liking").locator(".."); // Find the blog containing the title
+
+            //     // Ensure there is only one "view" button for this blog and click it
+            //     const viewBtn = blog.locator("button", { hasText: "view" }).first(); // Ensure we select the correct button
+            //     await viewBtn.click();
+
+            //     // Wait for the like button to be visible
+            //     const likeBtn = blog.locator("button", { hasText: "like" });
+            //     await likeBtn.waitFor({ state: "visible", timeout: 10000 });
+
+            //     // Click the like button
+            //     await likeBtn.click();
+
+            //     // Wait for the like count to update (adding a small delay)
+            //     await page.waitForTimeout(1000); // Add a small delay to allow the UI to update
+
+            //     // Verify the number of likes has increased
+            //     const likesParagraph = blog.locator("p", { hasText: "likes" });
+            //     await expect(likesParagraph).toContainText("likes 1", { timeout: 5000 });
+            // });
         });
     });
 });
