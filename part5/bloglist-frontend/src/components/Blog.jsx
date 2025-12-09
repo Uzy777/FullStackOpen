@@ -1,7 +1,7 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
 
-const Blog = ({ blog, user, handleDelete }) => {
+const Blog = ({ blog, user, handleDelete, handleLike }) => {
     const [visible, setVisible] = useState(false);
     const [likes, setLikes] = useState(blog.likes);
 
@@ -9,18 +9,25 @@ const Blog = ({ blog, user, handleDelete }) => {
 
     const toggleVisibility = () => setVisible(!visible);
 
-    const handleLike = async () => {
+    const handleLikeClick = async () => {
+        if (handleLike) {
+            handleLike(blog);
+        }
+
+        // Increase likes in UI immediately
+        const newLikes = likes + 1;
+        setLikes(newLikes);
+
         try {
             const updatedBlog = {
                 user: blog.user ? blog.user.id : null,
-                likes: likes + 1,
+                likes: newLikes,
                 author: blog.author,
                 title: blog.title,
                 url: blog.url,
             };
 
-            const returnedBlog = await blogService.update(blog.id, updatedBlog);
-            setLikes(returnedBlog.likes);
+            await blogService.update(blog.id, updatedBlog);
         } catch (error) {
             console.error("Error updating likes:", error);
         }
@@ -36,7 +43,7 @@ const Blog = ({ blog, user, handleDelete }) => {
                 <div>
                     <div>{blog.url}</div>
                     <div>
-                        likes {likes} <button onClick={handleLike}>like</button>
+                        likes {likes} <button onClick={handleLikeClick}>like</button>
                     </div>
                     <div>{blog.user?.name || "Unknown user"}</div>
 
