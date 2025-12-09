@@ -1,22 +1,18 @@
 // tests/blog_app.spec.js
-const { test, describe, expect } = require("@playwright/test");
+const { test, describe, expect, beforeEach } = require("@playwright/test");
 const { loginWith } = require("./blog_helper");
 
 describe("Blog app", () => {
-    test.beforeEach(async ({ page, request }) => {
-        // reset DB
+    beforeEach(async ({ page, request }) => {
         await request.post("/api/testing/reset");
-
-        // create user
         await request.post("/api/users", {
             data: {
-                username: "testuser",
-                name: "Test User",
-                password: "sekret",
+                name: "Matti Luukkainen",
+                username: "mluukkai",
+                password: "salainen",
             },
         });
 
-        // open app
         await page.goto("/");
     });
 
@@ -28,22 +24,20 @@ describe("Blog app", () => {
     });
 
     describe("Login", () => {
-        test("succeeds with correct credentials", async ({ page }) => {
-            await loginWith(page, "testuser", "sekret");
-
-            // assert that we're on the blogs view, not the login view
-            await expect(page.getByText("blogs")).toBeVisible();
-            await expect(page.getByRole("button", { name: /logout/i })).toBeVisible();
+        test("user can log in", async ({ page }) => {
+            await loginWith(page, "mluukkai", "salainen");
+            await expect(page.getByText("Matti Luukkainen logged in")).toBeVisible();
         });
 
-        test("fails with wrong credentials", async ({ page }) => {
-            await loginWith(page, "testuser", "wrong");
+        test("login fails with wrong password", async ({ page }) => {
+            await loginWith(page, "mluukkai", "wrong");
 
-            const errorDiv = page.locator(".error"); // assuming Notification uses class "error"
+            const errorDiv = page.locator(".error");
             await expect(errorDiv).toContainText("wrong username or password");
+            await expect(errorDiv).toHaveCSS("border-style", "solid");
+            await expect(errorDiv).toHaveCSS("color", "rgb(255, 0, 0)");
 
-            // still on login view
-            await expect(page.getByText("Log in to application")).toBeVisible();
+            await expect(page.getByText("Matti Luukkainen logged in")).not.toBeVisible();
         });
     });
 });
