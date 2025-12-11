@@ -35,21 +35,29 @@ const App = () => {
         event.preventDefault();
         const content = event.target.note.value;
         event.target.note.value = "";
-        store.dispatch({
+        store.dispatch(createNote(content));
+    };
+
+    const toggleImportance = (id) => {
+        store.dispatch(toggleImportanceOf(id));
+    };
+
+    const createNote = (content) => {
+        return {
             type: "NEW_NOTE",
             payload: {
                 content,
                 important: false,
                 id: generateId(),
             },
-        });
+        };
     };
 
-    const toggleImportance = (id) => {
-        store.dispatch({
+    const toggleImportanceOf = (id) => {
+        return {
             type: "TOGGLE_IMPORTANCE",
             payload: { id },
-        });
+        };
     };
 
     return (
