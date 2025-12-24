@@ -1,5 +1,6 @@
 import NoteForm from "./components/NoteForm";
 import Notes from "./components/Notes";
+import VisibilityFilter from "./components/VisibilityFilter";
 
 const App = () => {
     const filterSelected = (value) => {
@@ -9,14 +10,7 @@ const App = () => {
     return (
         <div>
             <NoteForm />
-            <div>
-                <input type="radio" name="filter" onChange={() => filterSelected("ALL")} />
-                all
-                <input type="radio" name="filter" onChange={() => filterSelected("IMPORTANT")} />
-                important
-                <input type="radio" name="filter" onChange={() => filterSelected("NONIMPORTANT")} />
-                nonimportant
-            </div>
+            <VisibilityFilter />
             <Notes />
         </div>
     );
