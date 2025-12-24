@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import anecdoteReducer from "../reducers/anecdoteReducer";
+import { createAnecdote } from "../reducers/anecdoteReducer";
 
 const generateId = () => Number((Math.random() * 1000000).toFixed(0));
 
@@ -10,14 +10,17 @@ const AnecdoteForm = () => {
         event.preventDefault();
         const content = event.target.anecdote.value;
         event.target.anecdote.value = "";
-        dispatch({
-            type: "NEW_ANECDOTE",
-            payload: {
-                content,
-                id: generateId(),
-                votes: 0,
-            },
-        });
+
+        dispatch(createAnecdote(content));
+
+        // dispatch({
+        //     type: "NEW_ANECDOTE",
+        //     payload: {
+        //         content,
+        //         id: generateId(),
+        //         votes: 0,
+        //     },
+        // });
     };
 
     return (
