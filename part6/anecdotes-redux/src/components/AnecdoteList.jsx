@@ -19,7 +19,7 @@ const AnecdoteList = () => {
         setTimeout(() => {
             dispatch(clearNotification());
         }, 5000);
-    };
+    }; 
 
     return (
         <div>
