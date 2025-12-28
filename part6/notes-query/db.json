@@ -7,7 +7,7 @@
     },
     {
       "content": "state changes are made with actions",
-      "important": false,
+      "important": true,
       "id": "2"
     },
     {
@@ -23,7 +23,7 @@
     {
       "id": "47ae",
       "content": "ewrt",
-      "important": false
+      "important": true
     },
     {
       "id": "23fe",
@@ -53,7 +53,7 @@
     {
       "id": "e794",
       "content": "rtyrtdhrdfhrdfhfdh",
-      "important": false
+      "important": true
     }
   ]
 }
