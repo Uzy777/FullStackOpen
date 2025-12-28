@@ -26,18 +26,13 @@ const anecdoteSlice = createSlice({
     initialState: [],
     reducers: {
         createAnecdote(state, action) {
-            const content = action.payload;
-            state.push({
-                content,
-                id: getId(),
-                votes: 0,
-            });
+            state.push(action.payload);
         },
         voteAnecdote(state, action) {
-            const id = action.payload;
-            const anecdote = state.find((a) => a.id === id);
-            if (anecdote) {
-                anecdote.votes += 1;
+            const updated = action.payload;
+            const index = state.findIndex((a) => a.id === updated.id);
+            if (index !== -1) {
+                state[index] = updated;
             }
         },
         setAnecdotes(state, action) {
