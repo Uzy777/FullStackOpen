@@ -67,6 +67,15 @@ const App = () => {
           notificationDispatch({ type: 'CLEAR' })
         }, 5000)
       },
+      onError: () => {
+        notificationDispatch({
+          type: 'SET',
+          payload: 'anecdote must be at least 5 characters long',
+        })
+        setTimeout(() => {
+          notificationDispatch({ type: 'CLEAR' })
+        }, 5000)
+      },
     })
   }
 
