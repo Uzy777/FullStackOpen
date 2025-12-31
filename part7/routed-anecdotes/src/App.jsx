@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Link, useParams } from "react-router-dom";
 
 const Menu = () => {
     const padding = {
@@ -7,15 +7,31 @@ const Menu = () => {
     };
     return (
         <div>
-            <a href="#" style={padding}>
+            <a href="/" style={padding}>
                 anecdotes
             </a>
-            <a href="#" style={padding}>
+            <a href="/create" style={padding}>
                 create new
             </a>
-            <a href="#" style={padding}>
+            <a href="/about" style={padding}>
                 about
             </a>
+        </div>
+    );
+};
+
+const Anecdote = ({ anecdotes }) => {
+    const id = useParams().id;
+    const anecdote = anecdotes.find((n) => n.id === Number(id));
+    return (
+        <div>
+            <h2>
+                {anecdote.content} by {anecdote.author}
+            </h2>
+            <div>has {anecdote.votes} votes</div>
+            <div>
+                for more info see <a href={anecdote.info}>{anecdote.info}</a>
+            </div>
         </div>
     );
 };
@@ -25,7 +41,9 @@ const AnecdoteList = ({ anecdotes }) => (
         <h2>Anecdotes</h2>
         <ul>
             {anecdotes.map((anecdote) => (
-                <li key={anecdote.id}>{anecdote.content}</li>
+                <li key={anecdote.id}>
+                    <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
+                </li>
             ))}
         </ul>
     </div>
@@ -49,6 +67,7 @@ const About = () => (
 
 const Footer = () => (
     <div>
+        <br></br>
         Anecdote app for <a href="https://fullstackopen.com/">Full Stack Open</a>. See{" "}
         <a href="https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js">
             https://github.com/fullstack-hy2020/routed-anecdotes/blob/master/src/App.js
@@ -139,37 +158,16 @@ const App = () => {
     return (
         <Router>
             <h1>Software anecdotes</h1>
-            {/* <Menu /> */}
-
-            <div>
-                <Link style={padding} to="/">
-                    home
-                </Link>
-                <Link style={padding} to="/create">
-                    create
-                </Link>
-                <Link style={padding} to="/about">
-                    about
-                </Link>
-            </div>
+            <Menu />
 
             <Routes>
+                <Route path="/anecdotes/:id" element={<Anecdote anecdotes={anecdotes} />} />
                 <Route path="/" element={<AnecdoteList anecdotes={anecdotes} />} />
                 <Route path="/about" element={<About />} />
-
                 <Route path="/create" element={<CreateNew addNew={addNew} />} />
             </Routes>
             <Footer />
         </Router>
-
-        // <div>
-        //     <h1>Software anecdotes</h1>
-        //     <Menu />
-        //     <AnecdoteList  />
-        //     <About />
-        //     <CreateNew addNew={addNew} />
-        //     <Footer />
-        // </div>
     );
 };
 
