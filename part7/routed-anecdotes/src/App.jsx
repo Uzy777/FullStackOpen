@@ -79,9 +79,6 @@ const Footer = () => (
 );
 
 const CreateNew = (props) => {
-    // const [content, setContent] = useState("");
-    // const [author, setAuthor] = useState("");
-    // const [info, setInfo] = useState("");
     const content = useField("text");
     const author = useField("text");
     const info = useField("text");
@@ -121,7 +118,18 @@ const CreateNew = (props) => {
                     url for more info
                     <input {...info} />
                 </div>
-                <button>create</button>
+                <button type="submit">create</button>
+                <button
+                    type="button"
+                    style={{ marginLeft: 5 }}
+                    onClick={() => {
+                        content.reset();
+                        author.reset();
+                        info.reset();
+                    }}
+                >
+                    reset
+                </button>
             </form>
         </div>
     );
