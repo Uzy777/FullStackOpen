@@ -1,50 +1,63 @@
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../reducers/userReducer";
+import { Link } from "react-router-dom";
 
 const Users = () => {
     const dispatch = useDispatch();
 
-    const user = useSelector((state) => state.user);
+    const loggedInUser = useSelector((state) => state.user);
+
     const blogs = useSelector((state) => state.blogs);
 
-    if (!user) {
+    if (!loggedInUser) {
         return <p>No user logged in</p>;
     }
 
     const users = {};
 
     blogs.forEach((blog) => {
-        const username = blog.user?.username;
+        const blogUser = blog.user;
 
-        if (!username) return;
+        if (!blogUser) return;
 
-        if (!users[username]) {
-            users[username] = 0;
+        const userId = blogUser.id;
+
+        if (!users[userId]) {
+            users[userId] = {
+                id: blogUser.id,
+                username: blogUser.username,
+                name: blogUser.name,
+                blogs: 0,
+            };
         }
-        users[username] += 1;
+
+        users[userId].blogs += 1;
     });
 
-    const usersArray = Object.entries(users);
+    const usersArray = Object.values(users);
 
     return (
         <div>
-            <h2>Users</h2>
+            <h2>Blogs</h2>
 
-            <p>{user.username} logged in</p>
+            <p>{loggedInUser.username} logged in</p>
             <button onClick={() => dispatch(logoutUser())}>logout</button>
+            <h2>Users</h2>
 
             <table>
                 <thead>
                     <tr>
-                        <th></th>
-                        <th>blogs created</th>
+                        <th>User</th>
+                        <th>Blogs created</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {usersArray.map(([username, count]) => (
-                        <tr key={username}>
-                            <td>{username}</td>
-                            <td>{count}</td>
+                    {usersArray.map((u) => (
+                        <tr key={u.id}>
+                            <td>
+                                <Link to={`/users/${u.id}`}>{u.name || u.username}</Link>
+                            </td>
+                            <td>{u.blogs}</td>
                         </tr>
                     ))}
                 </tbody>
