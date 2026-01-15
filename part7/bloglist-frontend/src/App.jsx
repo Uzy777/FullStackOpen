@@ -10,6 +10,10 @@ import { setNotification, clearNotification } from "./reducers/notificationReduc
 import { initialiseBlogs, createBlog } from "./reducers/blogReducer";
 import { initialiseUser, loginUser, logoutUser } from "./reducers/userReducer";
 
+// react-router-dom
+import { Routes, Route, Link, useLocation } from "react-router-dom";
+import Users from "./pages/Users";
+
 const App = () => {
     const dispatch = useDispatch();
     const blogs = useSelector((state) => state.blogs);
@@ -17,6 +21,8 @@ const App = () => {
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
+
+    const location = useLocation();
 
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
@@ -106,6 +112,10 @@ const App = () => {
                 </form>
             </div>
         );
+    }
+
+    if (location.pathname === "/users") {
+        return <Users />;
     }
 
     return (
