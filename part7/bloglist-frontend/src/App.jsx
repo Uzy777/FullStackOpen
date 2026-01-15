@@ -5,13 +5,14 @@ import AddBlog from "./components/AddBlog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setNotification, clearNotification } from "./reducers/notificationReducer";
+import { initialiseBlogs, createBlog } from "./reducers/blogReducer";
 
 const App = () => {
     const dispatch = useDispatch();
+    const blogs = useSelector((state) => state.blogs);
 
-    const [blogs, setBlogs] = useState([]);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState(null);
@@ -23,8 +24,8 @@ const App = () => {
     const [blogVisible, setBlogVisible] = useState(false);
 
     useEffect(() => {
-        blogService.getAll().then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
-    }, []);
+        dispatch(initialiseBlogs());
+    }, [dispatch]);
 
     useEffect(() => {
         const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
@@ -57,43 +58,15 @@ const App = () => {
         }
     };
 
-    const addBlog = async (event) => {
+    const addBlog = (event) => {
         event.preventDefault();
 
-        try {
-            const blogObject = { title, author, url };
-            const returnedBlog = await blogService.create(blogObject);
+        dispatch(createBlog({ title, author, url }));
 
-            setBlogs(blogs.concat(returnedBlog));
-
-            dispatch(
-                setNotification({
-                    message: `a new blog "${returnedBlog.title}" by ${returnedBlog.author} added`,
-                    type: "success",
-                })
-            );
-
-            setTimeout(() => {
-                dispatch(clearNotification());
-            }, 5000);
-
-            setTitle("");
-            setAuthor("");
-            setUrl("");
-
-            setBlogVisible(false);
-        } catch {
-            dispatch(
-                setNotification({
-                    message: "could not create blog",
-                    type: "error",
-                })
-            );
-
-            setTimeout(() => {
-                dispatch(clearNotification());
-            }, 5000);
-        }
+        setTitle("");
+        setAuthor("");
+        setUrl("");
+        setBlogVisible(false);
     };
 
     const handleDelete = async (blogToDelete) => {
@@ -102,9 +75,6 @@ const App = () => {
 
         try {
             await blogService.remove(blogToDelete.id);
-
-            // Remove from state
-            setBlogs(blogs.filter((b) => b.id !== blogToDelete.id));
 
             dispatch(
                 setNotification({
@@ -116,6 +86,8 @@ const App = () => {
             setTimeout(() => {
                 dispatch(clearNotification());
             }, 5000);
+
+            dispatch(initialiseBlogs());
         } catch (error) {
             dispatch(
                 setNotification({
