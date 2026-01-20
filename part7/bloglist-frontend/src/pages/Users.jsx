@@ -38,10 +38,10 @@ const Users = () => {
 
     return (
         <div>
-            <h2>Blogs</h2>
+            <h2>Blog App</h2>
 
-            <p>{loggedInUser.username} logged in</p>
-            <button onClick={() => dispatch(logoutUser())}>logout</button>
+            {/* <p>{loggedInUser.username} logged in</p>
+            <button onClick={() => dispatch(logoutUser())}>logout</button> */}
             <h2>Users</h2>
 
             <table>

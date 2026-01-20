@@ -114,12 +114,12 @@ const Blogs = () => {
     // Logged-in view
     return (
         <div>
-            <h2>blogs</h2>
+            <h2>Blog App</h2>
             <Notification />
 
-            <p>
+            {/* <p>
                 {user.name} logged in <button onClick={() => dispatch(logoutUser())}>logout</button>
-            </p>
+            </p> */}
 
             {!blogVisible && <button onClick={() => setBlogVisible(true)}>create new blog</button>}
 

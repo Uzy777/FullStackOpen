@@ -33,9 +33,9 @@ const BlogView = () => {
 
     return (
         <div>
-            <h2>blogs</h2>
+            <h2>Blog App</h2>
 
-            <p>
+            {/* <p>
                 {loggedInUser.name} logged in{" "}
                 <button
                     onClick={() => {
@@ -45,7 +45,7 @@ const BlogView = () => {
                 >
                     logout
                 </button>
-            </p>
+            </p> */}
 
             <h2>{blog.title}</h2>
 

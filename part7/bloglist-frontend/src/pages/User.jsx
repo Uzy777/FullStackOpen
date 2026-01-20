@@ -24,9 +24,9 @@ const User = () => {
 
     return (
         <div>
-            <h2>Blogs</h2>
+            <h2>Blog App</h2>
 
-            <p>{loggedInUser.username} logged in</p>
+            {/* <p>{loggedInUser.username} logged in</p>
             <button
                 onClick={() => {
                     dispatch(logoutUser());
@@ -34,7 +34,7 @@ const User = () => {
                 }}
             >
                 logout
-            </button>
+            </button> */}
 
             <h2>{user.name || user.username}</h2>
 
