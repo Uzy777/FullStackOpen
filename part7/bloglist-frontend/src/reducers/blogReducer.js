@@ -37,7 +37,7 @@ export const createBlog = (blogObject) => {
                 setNotification({
                     message: `a new blog "${blogObject.title}" by ${blogObject.author} added`,
                     type: "success",
-                })
+                }),
             );
 
             setTimeout(() => {
@@ -48,13 +48,37 @@ export const createBlog = (blogObject) => {
                 setNotification({
                     message: "could not create blog",
                     type: "error",
-                })
+                }),
             );
 
             setTimeout(() => {
                 dispatch(clearNotification());
             }, 5000);
         }
+    };
+};
+
+export const likeBlog = (blog) => {
+    return async (dispatch) => {
+        const updatedBlog = {
+            ...blog,
+            likes: blog.likes + 1,
+            user: blog.user.id,
+        };
+
+        await blogService.update(blog.id, updatedBlog);
+
+        const blogs = await blogService.getAll();
+        dispatch(setBlogs(blogs));
+    };
+};
+
+export const deleteBlog = (id) => {
+    return async (dispatch) => {
+        await blogService.remove(id);
+
+        const blogs = await blogService.getAll();
+        dispatch(setBlogs(blogs));
     };
 };
 
