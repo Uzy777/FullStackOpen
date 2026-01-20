@@ -2,8 +2,13 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { likeBlog, deleteBlog } from "../reducers/blogReducer";
 import { logoutUser } from "../reducers/userReducer";
+import { useState } from "react";
+import blogService from "../services/blogs";
+import { initialiseBlogs } from "../reducers/blogReducer";
 
 const BlogView = () => {
+    const [comment, setComment] = useState("");
+
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -30,6 +35,16 @@ const BlogView = () => {
     };
 
     const isOwner = blog.user?.username === loggedInUser.username;
+
+    const handleAddComment = async (event) => {
+        event.preventDefault();
+
+        await blogService.addComment(blog.id, comment);
+
+        setComment("");
+
+        dispatch(initialiseBlogs());
+    };
 
     return (
         <div>
@@ -58,6 +73,18 @@ const BlogView = () => {
             <p>added by {blog.user?.name || blog.user?.username}</p>
 
             {isOwner && <button onClick={handleDelete}>remove</button>}
+
+            <h3>Comments</h3>
+
+            <form onSubmit={handleAddComment}>
+                <input value={comment} onChange={(e) => setComment(e.target.value)} />
+                <button type="submit">add comment</button>
+            </form>
+            <ul>
+                {blog.comments?.map((comment, index) => (
+                    <li key={index}>{comment}</li>
+                ))}
+            </ul>
         </div>
     );
 };

@@ -13,6 +13,10 @@ const blogSchema = new mongoose.Schema({
         default: 0,
     },
     // id: String,
+    comments: {
+        type: [String],
+        default: [],
+    },
 });
 
 blogSchema.set("toJSON", {

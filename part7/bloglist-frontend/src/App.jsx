@@ -30,7 +30,7 @@ const App = () => {
 
     return (
         <div>
-            <nav class="nav">
+            <nav className="nav">
                 <Link to="/">blogs</Link>
                 {" | "}
                 <Link to="/users">users</Link>
