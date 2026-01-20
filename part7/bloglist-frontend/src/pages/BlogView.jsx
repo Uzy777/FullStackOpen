@@ -6,6 +6,8 @@ import { useState } from "react";
 import blogService from "../services/blogs";
 import { initialiseBlogs } from "../reducers/blogReducer";
 
+import { Form, Button } from "react-bootstrap";
+
 const BlogView = () => {
     const [comment, setComment] = useState("");
 
@@ -67,19 +69,25 @@ const BlogView = () => {
             <a href={blog.url}>{blog.url}</a>
 
             <p>
-                likes {blog.likes} <button onClick={handleLike}>like</button>
+                likes {blog.likes} <Button onClick={handleLike}>like</Button>
             </p>
 
             <p>added by {blog.user?.name || blog.user?.username}</p>
 
-            {isOwner && <button onClick={handleDelete}>remove</button>}
+            {isOwner && (
+                <Button className="mb-3" onClick={handleDelete}>
+                    remove
+                </Button>
+            )}
 
             <h3>Comments</h3>
 
-            <form onSubmit={handleAddComment}>
-                <input value={comment} onChange={(e) => setComment(e.target.value)} />
-                <button type="submit">add comment</button>
-            </form>
+            <Form onSubmit={handleAddComment}>
+                <Form.Group className="mb-3">
+                    <Form.Control value={comment} onChange={(e) => setComment(e.target.value)} className="mb-3" />
+                    <Button type="submit">add comment</Button>
+                </Form.Group>
+            </Form>
             <ul>
                 {blog.comments?.map((comment, index) => (
                     <li key={index}>{comment}</li>

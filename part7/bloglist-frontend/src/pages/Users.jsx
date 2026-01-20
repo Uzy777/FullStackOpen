@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from "react-redux";
 import { logoutUser } from "../reducers/userReducer";
 import { Link } from "react-router-dom";
+import { Table } from "react-bootstrap";
 
 const Users = () => {
     const dispatch = useDispatch();
@@ -43,8 +44,7 @@ const Users = () => {
             {/* <p>{loggedInUser.username} logged in</p>
             <button onClick={() => dispatch(logoutUser())}>logout</button> */}
             <h2>Users</h2>
-
-            <table>
+            <Table striped>
                 <thead>
                     <tr>
                         <th>User</th>
@@ -61,7 +61,7 @@ const Users = () => {
                         </tr>
                     ))}
                 </tbody>
-            </table>
+            </Table>
         </div>
     );
 };

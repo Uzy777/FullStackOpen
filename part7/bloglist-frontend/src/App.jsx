@@ -10,6 +10,9 @@ import User from "./pages/User";
 import { initialiseBlogs } from "./reducers/blogReducer";
 import { initialiseUser, logoutUser } from "./reducers/userReducer";
 
+import { Navbar, Nav, Container, Button } from "react-bootstrap";
+import { LinkContainer } from "react-router-bootstrap";
+
 const App = () => {
     const dispatch = useDispatch();
 
@@ -29,18 +32,31 @@ const App = () => {
     };
 
     return (
-        <div>
-            <nav className="nav">
-                <Link to="/">blogs</Link>
-                {" | "}
-                <Link to="/users">users</Link>
-                {user && (
-                    <>
-                        {" | "}
-                        {user.name} logged in <button onClick={handleLogout}>logout</button>
-                    </>
-                )}
-            </nav>
+        <div className="container">
+            <Navbar bg="light" variant="light" expand="lg">
+                <Container>
+                    <Navbar.Brand>Blog App</Navbar.Brand>
+
+                    <Nav className="me-auto">
+                        <LinkContainer to="/">
+                            <Nav.Link>blogs</Nav.Link>
+                        </LinkContainer>
+
+                        <LinkContainer to="/users">
+                            <Nav.Link>users</Nav.Link>
+                        </LinkContainer>
+                    </Nav>
+
+                    {user && (
+                        <Navbar.Text>
+                            Signed in as: <strong>{user.name}</strong>{" "}
+                            <Button variant="outline-secondary" size="sm" className="ms-2" onClick={handleLogout}>
+                                logout
+                            </Button>
+                        </Navbar.Text>
+                    )}
+                </Container>
+            </Navbar>
 
             <Routes>
                 <Route path="/" element={<Blogs />} />

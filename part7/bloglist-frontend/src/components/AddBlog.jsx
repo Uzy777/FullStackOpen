@@ -1,26 +1,27 @@
+import { Form, Button } from "react-bootstrap";
+
 const AddBlog = ({ addBlog, title, author, url, handleTitleChange, handleAuthorChange, handleUrlChange }) => {
     return (
-        <form onSubmit={addBlog}>
-            <div>
-                <label>
-                    title:
-                    <input placeholder="title" value={title} onChange={handleTitleChange} />
-                </label>
-            </div>
-            <div>
-                <label>
-                    author:
-                    <input placeholder="author" value={author} onChange={handleAuthorChange} />
-                </label>
-            </div>
-            <div>
-                <label>
-                    url:
-                    <input placeholder="url" value={url} onChange={handleUrlChange} />
-                </label>
-            </div>
-            <button type="submit">create</button>
-        </form>
+        <Form onSubmit={addBlog}>
+            <Form.Group className="mb-3">
+                <Form.Label>Title</Form.Label>
+                <Form.Control placeholder="title" value={title} onChange={handleTitleChange} />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+                <Form.Label>Author</Form.Label>
+                <Form.Control placeholder="author" value={author} onChange={handleAuthorChange} />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+                <Form.Label>URL</Form.Label>
+                <Form.Control placeholder="url" value={url} onChange={handleUrlChange} />
+            </Form.Group>
+
+            <Button variant="primary" type="submit">
+                Create
+            </Button>
+        </Form>
     );
 };
 

@@ -11,6 +11,8 @@ import { initialiseBlogs, createBlog } from "../reducers/blogReducer";
 import { initialiseUser, loginUser, logoutUser } from "../reducers/userReducer";
 import { setNotification, clearNotification } from "../reducers/notificationReducer";
 
+import { Form, Button } from "react-bootstrap";
+
 const Blogs = () => {
     const dispatch = useDispatch();
 
@@ -36,7 +38,7 @@ const Blogs = () => {
             loginUser({
                 username,
                 password,
-            })
+            }),
         );
 
         setUsername("");
@@ -67,7 +69,7 @@ const Blogs = () => {
                 setNotification({
                     message: `Deleted "${blogToDelete.title}"`,
                     type: "success",
-                })
+                }),
             );
 
             setTimeout(() => {
@@ -80,7 +82,7 @@ const Blogs = () => {
                 setNotification({
                     message: "Failed to delete blog",
                     type: "error",
-                })
+                }),
             );
 
             setTimeout(() => {
@@ -96,17 +98,17 @@ const Blogs = () => {
                 <h2>Log in to application</h2>
                 <Notification />
 
-                <form onSubmit={handleLogin}>
-                    <div>
-                        username
-                        <input value={username} onChange={({ target }) => setUsername(target.value)} />
-                    </div>
-                    <div>
-                        password
-                        <input type="password" value={password} onChange={({ target }) => setPassword(target.value)} />
-                    </div>
-                    <button type="submit">login</button>
-                </form>
+                <Form onSubmit={handleLogin}>
+                    <Form.Group className="mb-3">
+                        <Form.Label>username</Form.Label>
+                        <Form.Control value={username} onChange={({ target }) => setUsername(target.value)} />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                        <Form.Label>password</Form.Label>
+                        <Form.Control type="password" value={password} onChange={({ target }) => setPassword(target.value)} />
+                    </Form.Group>
+                    <Button type="submit">login</Button>
+                </Form>
             </div>
         );
     }
@@ -121,7 +123,11 @@ const Blogs = () => {
                 {user.name} logged in <button onClick={() => dispatch(logoutUser())}>logout</button>
             </p> */}
 
-            {!blogVisible && <button onClick={() => setBlogVisible(true)}>create new blog</button>}
+            {!blogVisible && (
+                <Button className="mb-3" onClick={() => setBlogVisible(true)}>
+                    create new blog
+                </Button>
+            )}
 
             {blogVisible && (
                 <div>
@@ -134,7 +140,9 @@ const Blogs = () => {
                         handleAuthorChange={({ target }) => setAuthor(target.value)}
                         handleUrlChange={({ target }) => setUrl(target.value)}
                     />
-                    <button onClick={() => setBlogVisible(false)}>cancel</button>
+                    <Button className="mt-3" onClick={() => setBlogVisible(false)}>
+                        cancel
+                    </Button>
                 </div>
             )}
 
