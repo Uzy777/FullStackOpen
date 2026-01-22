@@ -53,6 +53,7 @@ const typeDefs = /* GraphQL */ `
 
     type Mutation {
         addPerson(name: String!, phone: String, street: String!, city: String!): Person
+        editNumber(name: String!, phone: String!): Person
     }
 `;
 
