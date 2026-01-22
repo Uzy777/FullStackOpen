@@ -1,5 +1,6 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
+import { v1 as uuid } from "uuid";
 
 let persons = [
     {
@@ -43,6 +44,10 @@ const typeDefs = /* GraphQL */ `
         allPersons: [Person!]!
         findPerson(name: String!): Person
     }
+
+    type Mutation {
+        addPerson(name: String!, phone: String, street: String!, city: String!): Person
+    }
 `;
 
 const resolvers = {
@@ -58,6 +63,13 @@ const resolvers = {
                 street,
                 city,
             };
+        },
+    },
+    Mutation: {
+        addPerson: (root, args) => {
+            const person = { ...args, id: uuid() };
+            persons = persons.concat(person);
+            return person;
         },
     },
 };
