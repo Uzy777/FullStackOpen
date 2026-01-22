@@ -1,6 +1,7 @@
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 import { v1 as uuid } from "uuid";
+import { GraphQLError } from "graphql";
 
 let persons = [
     {
@@ -67,6 +68,15 @@ const resolvers = {
     },
     Mutation: {
         addPerson: (root, args) => {
+            if (persons.find((p) => p.name === args.name)) {
+                throw new GraphQLError(`Name must be unique: ${args.name}`, {
+                    extensions: {
+                        code: "BAD_USER_INPUT",
+                        invlaidArgs: args.name,
+                    },
+                });
+            }
+
             const person = { ...args, id: uuid() };
             persons = persons.concat(person);
             return person;
