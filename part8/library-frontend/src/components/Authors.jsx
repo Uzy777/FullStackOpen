@@ -63,14 +63,20 @@ const Authors = ({ show }) => {
                 <h3>Set birthyear</h3>
                 <div>
                     <label>name: </label>
-                    <input type="text" value={name} onChange={(e) => setName(e.target.value)}></input>
+                    <select value={name} onChange={(e) => setName(e.target.value)}>
+                        {authors.map((a) => (
+                            <option key={a.name} value={a.name}>
+                                {a.name}
+                            </option>
+                        ))}
+                    </select>
                 </div>
 
                 <div>
                     <label>born: </label>
                     <input type="number" value={born} onChange={(e) => setBorn(e.target.value)}></input>
                 </div>
-                <button>update author</button>
+                <button type="submit">update author</button>
             </form>
         </div>
     );
