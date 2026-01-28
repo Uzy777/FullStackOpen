@@ -1,11 +1,9 @@
 const { ApolloServer } = require("@apollo/server");
 const { startStandaloneServer } = require("@apollo/server/standalone");
-
 const jwt = require("jsonwebtoken");
 
 const resolvers = require("./resolvers");
 const typeDefs = require("./schema");
-
 const User = require("./models/user");
 
 const getUserFromAuthHeader = async (auth) => {
@@ -25,7 +23,6 @@ const startServer = (port) => {
 
     startStandaloneServer(server, {
         listen: { port },
-
         context: async ({ req }) => {
             const auth = req.headers.authorization;
             const currentUser = await getUserFromAuthHeader(auth);

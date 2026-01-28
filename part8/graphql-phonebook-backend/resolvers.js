@@ -1,7 +1,7 @@
 const { GraphQLError } = require("graphql");
+const jwt = require("jsonwebtoken");
 const Person = require("./models/person");
 const User = require("./models/user");
-const jwt = require("jsonwebtoken");
 
 const resolvers = {
     Query: {
@@ -14,6 +14,9 @@ const resolvers = {
             return Person.find({ phone: { $exists: args.phone === "YES" } });
         },
         findPerson: async (root, args) => Person.findOne({ name: args.name }),
+        me: (root, args, context) => {
+            return context.currentUser;
+        },
     },
     Person: {
         address: ({ street, city }) => {
@@ -24,7 +27,17 @@ const resolvers = {
         },
     },
     Mutation: {
-        addPerson: async (root, args) => {
+        addPerson: async (root, args, context) => {
+            const currentUser = context.currentUser;
+
+            if (!currentUser) {
+                throw new GraphQLError("not authenticated", {
+                    extensions: {
+                        code: "UNAUTHENTICATED",
+                    },
+                });
+            }
+
             const nameExists = await Person.exists({ name: args.name });
 
             if (nameExists) {
@@ -40,6 +53,8 @@ const resolvers = {
 
             try {
                 await person.save();
+                currentUser.friends = currentUser.friends.concat(person);
+                await currentUser.save();
             } catch (error) {
                 throw new GraphQLError(`Saving person failed: ${error.message}`, {
                     extensions: {
@@ -105,6 +120,24 @@ const resolvers = {
             };
 
             return { value: jwt.sign(userForToken, process.env.JWT_SECRET) };
+        },
+        addAsFriend: async (root, args, { currentUser }) => {
+            if (!currentUser) {
+                throw new GraphQLError("not authenticated", {
+                    extensions: { code: "UNAUTHENTICATED" },
+                });
+            }
+
+            const nonFriendAlready = (person) => !currentUser.friends.map((f) => f._id.toString()).includes(person._id.toString());
+
+            const person = await Person.findOne({ name: args.name });
+            if (nonFriendAlready(person)) {
+                currentUser.friends = currentUser.friends.concat(person);
+            }
+
+            await currentUser.save();
+
+            return currentUser;
         },
     },
 };
