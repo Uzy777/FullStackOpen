@@ -8,20 +8,15 @@ const Authors = ({ show }) => {
     const [name, setName] = useState("");
     const [born, setBorn] = useState("");
 
-    const result = useQuery(ALL_AUTHORS);
+    const { data, loading, error } = useQuery(ALL_AUTHORS);
     const [editAuthor] = useMutation(EDIT_BORN, {
         refetchQueries: [{ query: ALL_AUTHORS }],
     });
 
-    if (!show) {
-        return null;
-    }
+    if (loading) return <div>loading...</div>;
+    if (error) return <div style={{ color: "red" }}>{error.message}</div>;
 
-    if (result.loading) {
-        return <div>loading...</div>;
-    }
-
-    const authors = result.data.allAuthors;
+    const authors = data.allAuthors;
 
     const handleSubmit = async (e) => {
         e.preventDefault();
