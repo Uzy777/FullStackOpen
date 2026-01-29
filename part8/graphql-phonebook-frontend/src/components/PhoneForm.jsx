@@ -18,7 +18,11 @@ const PhoneForm = ({ setError }) => {
     const submit = async (event) => {
         event.preventDefault();
 
-        changeNumber({ variables: { name, phone } });
+        try {
+            changeNumber({ variables: { name, phone } });
+        } catch (error) {
+            setError(error.message);
+        }
 
         setName("");
         setPhone("");
