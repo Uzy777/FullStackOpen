@@ -24,8 +24,18 @@ const resolvers = {
             return Book.find(filter).populate("author");
         },
 
+        allAuthors: async () => {
+            return Author.find({});
+        },
+
         me: (root, args, context) => {
             return context.currentUser;
+        },
+    },
+
+    Author: {
+        bookCount: async (root) => {
+            return Book.countDocuments({ author: root._id });
         },
     },
 

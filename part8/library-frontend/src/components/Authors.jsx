@@ -13,6 +13,10 @@ const Authors = ({ show }) => {
         refetchQueries: [{ query: ALL_AUTHORS }],
     });
 
+    if (!show) {
+        return null;
+    }
+
     if (loading) return <div>loading...</div>;
     if (error) return <div style={{ color: "red" }}>{error.message}</div>;
 

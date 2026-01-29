@@ -4,6 +4,10 @@ import { ALL_BOOKS } from "../queries";
 const Books = ({ show }) => {
     const { data, loading, error } = useQuery(ALL_BOOKS);
 
+    if (!show) {
+        return null;
+    }
+
     if (loading) return <div>loading...</div>;
     if (error) return <div style={{ color: "red" }}>{error.message}</div>;
 
