@@ -4,17 +4,25 @@ import { useState } from "react";
 
 const Books = ({ show }) => {
     const [genre, setGenre] = useState(null);
-    const { data, loading, error } = useQuery(ALL_BOOKS);
+
+    // filtered books (table)
+    const booksResult = useQuery(ALL_BOOKS, {
+        variables: { genre },
+    });
+
+    // unfiltered books (genre buttons)
+    const genresResult = useQuery(ALL_BOOKS);
 
     if (!show) return null;
-    if (loading) return <div>loading...</div>;
-    if (error) return <div style={{ color: "red" }}>{error.message}</div>;
+    if (booksResult.loading || genresResult.loading) {
+        return <div>loading...</div>;
+    }
+    if (booksResult.error) {
+        return <div style={{ color: "red" }}>{booksResult.error.message}</div>;
+    }
 
-    const books = data.allBooks;
-
-    const allGenres = Array.from(new Set(books.flatMap((b) => b.genres)));
-
-    const booksToShow = genre ? books.filter((b) => b.genres.includes(genre)) : books;
+    const books = booksResult.data.allBooks;
+    const allGenres = Array.from(new Set(genresResult.data.allBooks.flatMap((b) => b.genres)));
 
     return (
         <div>
@@ -31,11 +39,11 @@ const Books = ({ show }) => {
                         <th>author</th>
                         <th>published</th>
                     </tr>
-                    {booksToShow.map((a) => (
-                        <tr key={a.title}>
-                            <td>{a.title}</td>
-                            <td>{a.author.name}</td>
-                            <td>{a.published}</td>
+                    {books.map((b) => (
+                        <tr key={b.title}>
+                            <td>{b.title}</td>
+                            <td>{b.author.name}</td>
+                            <td>{b.published}</td>
                         </tr>
                     ))}
                 </tbody>

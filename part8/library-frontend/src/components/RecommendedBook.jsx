@@ -3,6 +3,7 @@ import { ALL_BOOKS, ME } from "../queries";
 
 const RecommendedBook = ({ show }) => {
     const userResult = useQuery(ME);
+
     const booksResult = useQuery(ALL_BOOKS, {
         skip: !userResult.data,
         variables: {
@@ -18,7 +19,6 @@ const RecommendedBook = ({ show }) => {
 
     const favoriteGenre = userResult.data.me.favoriteGenre;
     const books = booksResult.data.allBooks;
-    const booksToShow = books.filter((b) => b.genres.includes(favoriteGenre));
 
     return (
         <div>
@@ -36,7 +36,7 @@ const RecommendedBook = ({ show }) => {
                         <th>published</th>
                     </tr>
 
-                    {booksToShow.map((b) => (
+                    {books.map((b) => (
                         <tr key={b.title}>
                             <td>{b.title}</td>
                             <td>{b.author.name}</td>
