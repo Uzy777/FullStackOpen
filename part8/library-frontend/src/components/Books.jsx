@@ -8,6 +8,7 @@ const Books = ({ show }) => {
     // filtered books (table)
     const booksResult = useQuery(ALL_BOOKS, {
         variables: { genre },
+        refetchQueries: [{ query: ALL_BOOKS }],
     });
 
     // unfiltered books (genre buttons)
