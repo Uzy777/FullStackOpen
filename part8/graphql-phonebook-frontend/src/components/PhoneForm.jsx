@@ -19,7 +19,7 @@ const PhoneForm = ({ setError }) => {
         event.preventDefault();
 
         try {
-            changeNumber({ variables: { name, phone } });
+            await changeNumber({ variables: { name, phone } });
         } catch (error) {
             setError(error.message);
         }

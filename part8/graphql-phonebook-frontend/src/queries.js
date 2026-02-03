@@ -1,6 +1,6 @@
 import { gql } from "@apollo/client";
 
-export const PERSON_DETAILS = gql`
+const PERSON_DETAILS = gql`
     fragment PersonDetails on Person {
         id
         name
@@ -35,21 +35,29 @@ export const FIND_PERSON = gql`
 export const CREATE_PERSON = gql`
     mutation createPerson($name: String!, $street: String!, $city: String!, $phone: String) {
         addPerson(name: $name, street: $street, city: $city, phone: $phone) {
-            ...PersonDetails
+            name
+            phone
+            id
+            address {
+                street
+                city
+            }
         }
     }
-
-    ${PERSON_DETAILS}
 `;
 
 export const EDIT_NUMBER = gql`
     mutation editNumber($name: String!, $phone: String!) {
         editNumber(name: $name, phone: $phone) {
-            ...PersonDetails
+            name
+            phone
+            address {
+                street
+                city
+            }
+            id
         }
     }
-
-    ${PERSON_DETAILS}
 `;
 
 export const LOGIN = gql`
@@ -58,4 +66,14 @@ export const LOGIN = gql`
             value
         }
     }
+`;
+
+export const PERSON_ADDED = gql`
+    subscription {
+        personAdded {
+            ...PersonDetails
+        }
+    }
+
+    ${PERSON_DETAILS}
 `;
