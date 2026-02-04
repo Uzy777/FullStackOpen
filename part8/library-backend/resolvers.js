@@ -1,15 +1,18 @@
 const { GraphQLError } = require("graphql");
-const { v1: uuid } = require("uuid");
 const Author = require("./models/author");
 const Book = require("./models/book");
 const User = require("./models/user");
 
 const jwt = require("jsonwebtoken");
+const { PubSub } = require("graphql-subscriptions");
+
+const pubsub = new PubSub();
+const BOOK_ADDED = "BOOK_ADDED";
 
 const resolvers = {
     Query: {
         allBooks: async (root, args) => {
-            let filter = {};
+            const filter = {};
 
             if (args.author) {
                 const author = await Author.findOne({ name: args.author });
@@ -63,7 +66,13 @@ const resolvers = {
                 });
 
                 await book.save();
-                return book.populate("author");
+                const populatedBook = await book.populate("author");
+
+                pubsub.publish(BOOK_ADDED, {
+                    bookAdded: populatedBook,
+                });
+
+                return populatedBook;
             } catch (error) {
                 throw new GraphQLError(error.message, {
                     extensions: {
@@ -133,6 +142,12 @@ const resolvers = {
             return {
                 value: jwt.sign(userForToken, process.env.JWT_SECRET),
             };
+        },
+    },
+
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterableIterator([BOOK_ADDED]),
         },
     },
 };
