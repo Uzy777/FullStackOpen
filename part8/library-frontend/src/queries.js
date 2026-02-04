@@ -67,7 +67,10 @@ export const ME = gql`
 export const BOOK_ADDED = gql`
     subscription {
         bookAdded {
+            id
             title
+            published
+            genres
             author {
                 name
             }
