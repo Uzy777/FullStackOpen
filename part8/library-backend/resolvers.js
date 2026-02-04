@@ -28,17 +28,28 @@ const resolvers = {
         },
 
         allAuthors: async () => {
-            return Author.find({});
-        },
+            const authors = await Author.aggregate([
+                {
+                    $lookup: {
+                        from: "books",
+                        localField: "_id",
+                        foreignField: "author",
+                        as: "books",
+                    },
+                },
+                {
+                    $addFields: {
+                        bookCount: { $size: "$books" },
+                    },
+                },
+                {
+                    $project: {
+                        books: 0,
+                    },
+                },
+            ]);
 
-        me: (root, args, context) => {
-            return context.currentUser;
-        },
-    },
-
-    Author: {
-        bookCount: async (root) => {
-            return Book.countDocuments({ author: root._id });
+            return authors;
         },
     },
 
