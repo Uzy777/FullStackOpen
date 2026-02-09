@@ -1,19 +1,30 @@
+export {};
+
 const calculateBmi = (heightCm: number, weightKg: number): string => {
     const heightM = heightCm / 100;
     const bmi = weightKg / (heightM * heightM);
 
-    if (bmi < 18.5) {
-        return "Underweight";
-    } else if (bmi < 24.9) {
-        return "Normal weight";
-    } else if (bmi < 29.9) {
-        return "Overweight";
-    } else if (bmi > 3) {
-        return "Obese";
-    }
+    if (bmi < 18.5) return "Underweight";
+    if (bmi < 25) return "Normal range";
+    if (bmi < 30) return "Overweight";
+    return "Obese";
 };
 
-console.log(calculateBmi(180, 74));
+// ---- CLI handling ----
+const args = process.argv.slice(2);
+
+if (args.length !== 2) {
+    throw new Error("Please provide exactly two arguments: height(cm) and weight(kg)");
+}
+
+const height = Number(args[0]);
+const weight = Number(args[1]);
+
+if (isNaN(height) || isNaN(weight)) {
+    throw new Error("Provided values must be numbers");
+}
+
+console.log(calculateBmi(height, weight));
 
 // Underweight: < 18.5
 
