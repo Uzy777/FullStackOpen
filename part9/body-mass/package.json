@@ -1,15 +1,16 @@
 {
-  "name": "body-mass",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "calculateBmi": "ts-node bmiCalculator.ts"
-  },
-  "author": "",
-  "license": "ISC",
-  "description": "",
-  "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.9.3"
-  }
+    "name": "body-mass",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "calculateBmi": "ts-node bmiCalculator.ts",
+        "calculateExercises": "ts-node exerciseCalculator.ts"
+    },
+    "author": "",
+    "license": "ISC",
+    "description": "",
+    "devDependencies": {
+        "ts-node": "^10.9.2",
+        "typescript": "^5.9.3"
+    }
 }
