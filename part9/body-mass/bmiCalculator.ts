@@ -1,6 +1,4 @@
-export {};
-
-const calculateBmi = (heightCm: number, weightKg: number): string => {
+export const calculateBmi = (heightCm: number, weightKg: number): string => {
     const heightM = heightCm / 100;
     const bmi = weightKg / (heightM * heightM);
 
@@ -11,20 +9,22 @@ const calculateBmi = (heightCm: number, weightKg: number): string => {
 };
 
 // ---- CLI handling ----
-const args = process.argv.slice(2);
+if (require.main === module) {
+    const args = process.argv.slice(2);
 
-if (args.length !== 2) {
-    throw new Error("Please provide exactly two arguments: height(cm) and weight(kg)");
+    if (args.length !== 2) {
+        throw new Error("Please provide exactly two arguments: height(cm) and weight(kg)");
+    }
+
+    const height = Number(args[0]);
+    const weight = Number(args[1]);
+
+    if (isNaN(height) || isNaN(weight)) {
+        throw new Error("Provided values must be numbers");
+    }
+
+    console.log(calculateBmi(height, weight));
 }
-
-const height = Number(args[0]);
-const weight = Number(args[1]);
-
-if (isNaN(height) || isNaN(weight)) {
-    throw new Error("Provided values must be numbers");
-}
-
-console.log(calculateBmi(height, weight));
 
 // Underweight: < 18.5
 
