@@ -1,6 +1,6 @@
 import { NewDiaryEntry, Weather, Visibility } from "./types";
 
-/* ---------------- TYPE GUARDS ---------------- */
+/* ---------- TYPE GUARDS ---------- */
 
 const isString = (text: unknown): text is string => {
     return typeof text === "string" || text instanceof String;
@@ -11,65 +11,63 @@ const isDate = (date: string): boolean => {
 };
 
 const isWeather = (param: string): param is Weather => {
-    return Object.values(Weather).includes(param as Weather);
+    return Object.values(Weather)
+        .map((v) => v.toString())
+        .includes(param);
 };
 
 const isVisibility = (param: string): param is Visibility => {
-    return Object.values(Visibility).includes(param as Visibility);
+    return Object.values(Visibility)
+        .map((v) => v.toString())
+        .includes(param);
 };
 
-/* ---------------- PARSERS ---------------- */
+/* ---------- PARSERS ---------- */
 
 const parseComment = (comment: unknown): string => {
     if (!isString(comment)) {
-        throw new Error("Incorrect or missing comment");
+        throw new Error("Incorrect comment: " + comment);
     }
     return comment;
 };
 
 const parseDate = (date: unknown): string => {
     if (!isString(date) || !isDate(date)) {
-        throw new Error("Incorrect or missing date");
+        throw new Error("Incorrect date: " + date);
     }
     return date;
 };
 
 const parseWeather = (weather: unknown): Weather => {
     if (!isString(weather) || !isWeather(weather)) {
-        throw new Error("Incorrect or missing weather");
+        throw new Error("Incorrect weather: " + weather);
     }
     return weather;
 };
 
 const parseVisibility = (visibility: unknown): Visibility => {
     if (!isString(visibility) || !isVisibility(visibility)) {
-        throw new Error("Incorrect or missing visibility");
+        throw new Error("Incorrect visibility: " + visibility);
     }
     return visibility;
 };
 
-/* ---------------- MAIN FUNCTION ---------------- */
-
+/* MAIN PARSER FUNCTION */
 const toNewDiaryEntry = (object: unknown): NewDiaryEntry => {
     if (!object || typeof object !== "object") {
         throw new Error("Incorrect or missing data");
     }
 
-    const newObject = object as {
-        date: unknown;
-        weather: unknown;
-        visibility: unknown;
-        comment: unknown;
-    };
+    if ("comment" in object && "date" in object && "weather" in object && "visibility" in object) {
+        return {
+            comment: parseComment(object.comment),
+            date: parseDate(object.date),
+            weather: parseWeather(object.weather),
+            visibility: parseVisibility(object.visibility),
+        };
+    }
 
-    const newEntry: NewDiaryEntry = {
-        date: parseDate(newObject.date),
-        weather: parseWeather(newObject.weather),
-        visibility: parseVisibility(newObject.visibility),
-        comment: parseComment(newObject.comment),
-    };
-
-    return newEntry;
+    throw new Error("Incorrect data: some fields are missing");
 };
 
 export default toNewDiaryEntry;
