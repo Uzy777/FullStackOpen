@@ -1,17 +1,13 @@
 import express from "express";
-
 import diaryService from "../services/diaryService";
+import { NewEntrySchema } from "../utils";
 
-import toNewDiaryEntry from "../utils";
+import { z } from "zod";
 
 const router = express.Router();
 
 router.get("/", (_req, res) => {
     res.send(diaryService.getNonSensitiveEntries());
-});
-
-router.post("/", (_req, res) => {
-    res.send("Saving a diary!");
 });
 
 router.get("/:id", (req, res) => {
@@ -26,16 +22,20 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
     try {
-        const newDiaryEntry = toNewDiaryEntry(req.body);
+        const newDiaryEntry = NewEntrySchema.parse(req.body);
         const addedEntry = diaryService.addDiary(newDiaryEntry);
         res.json(addedEntry);
     } catch (error: unknown) {
-        let errorMessage = "Something went wrong.";
-        if (error instanceof Error) {
-            errorMessage += " Error: " + error.message;
+        if (error instanceof z.ZodError) {
+            res.status(400).send({ error: error.issues });
+        } else {
+            res.status(400).send({ error: "unknown error" });
         }
-        res.status(400).send(errorMessage);
     }
+});
+
+router.post("/", (_req, res) => {
+    res.send("Saving a diary!");
 });
 
 export default router;
