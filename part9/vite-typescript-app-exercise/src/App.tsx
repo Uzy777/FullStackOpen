@@ -47,6 +47,19 @@ const App = () => {
             backgroundMaterial: "https://type-level-typescript.com/template-literal-types",
             kind: "background",
         },
+        {
+            name: "TypeScript in frontend",
+            exerciseCount: 10,
+            description: "a hard part",
+            kind: "basic",
+        },
+        {
+            name: "Backend development",
+            exerciseCount: 21,
+            description: "Typing the backend",
+            requirements: ["nodejs", "jest"],
+            kind: "special",
+        },
     ];
 
     return (
