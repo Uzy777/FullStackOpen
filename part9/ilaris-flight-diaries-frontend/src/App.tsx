@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 import diaryService from "./services/diaries";
 import type { DiaryEntry, NewDiaryEntry } from "./types";
@@ -8,6 +9,7 @@ const App = () => {
     const [visibility, setVisibility] = useState("");
     const [weather, setWeather] = useState("");
     const [comment, setComment] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         diaryService
@@ -38,15 +40,26 @@ const App = () => {
                 setVisibility("");
                 setWeather("");
                 setComment("");
+                setErrorMessage("");
             })
-            .catch((error) => {
-                console.error("Failed to create diary:", error);
+            .catch((error: unknown) => {
+                if (axios.isAxiosError(error)) {
+                    if (typeof error.response?.data === "string") {
+                        setErrorMessage(error.response.data);
+                    } else {
+                        setErrorMessage("Failed to create diary entry");
+                    }
+                } else {
+                    setErrorMessage("Unknown error");
+                }
             });
     };
 
     return (
         <div>
             <h1>Add new entry</h1>
+
+            {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
 
             <form onSubmit={diaryCreation}>
                 <div>
