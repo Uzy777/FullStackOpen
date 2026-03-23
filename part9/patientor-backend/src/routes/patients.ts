@@ -8,6 +8,16 @@ router.get("/", (_req, res) => {
     res.json(patientsService.getNonSensitivePatients());
 });
 
+router.get("/:id", (req, res) => {
+    const patient = patientsService.getPatientById(req.params.id);
+
+    if (patient) {
+        res.json(patient);
+    } else {
+        res.status(404).send("Patient not found");
+    }
+});
+
 router.post("/", (req, res) => {
     try {
         const newPatient = toNewPatient(req.body);
