@@ -1,13 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import diaryService from "./services/diaries";
-import type { DiaryEntry, NewDiaryEntry } from "./types";
+import type { DiaryEntry, NewDiaryEntry, Visibility, Weather } from "./types";
 
 const App = () => {
     const [diaries, setDiaries] = useState<DiaryEntry[]>([]);
     const [date, setDate] = useState("");
-    const [visibility, setVisibility] = useState("");
-    const [weather, setWeather] = useState("");
+    const [visibility, setVisibility] = useState<Visibility | "">("");
+    const [weather, setWeather] = useState<Weather | "">("");
     const [comment, setComment] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
 
@@ -25,10 +25,15 @@ const App = () => {
     const diaryCreation = (event: React.SyntheticEvent) => {
         event.preventDefault();
 
+        if (!date || !weather || !visibility || !comment) {
+            setErrorMessage("All fields are required");
+            return;
+        }
+
         const newDiary: NewDiaryEntry = {
             date,
-            visibility,
             weather,
+            visibility,
             comment,
         };
 
@@ -64,22 +69,110 @@ const App = () => {
             <form onSubmit={diaryCreation}>
                 <div>
                     date
-                    <input type="date" value={date} onChange={(event) => setDate(event.target.value)} />
+                    <input type="date" value={date} onChange={({ target }) => setDate(target.value)} />
                 </div>
 
                 <div>
-                    visibility
-                    <input value={visibility} onChange={(event) => setVisibility(event.target.value)} />
+                    visibility:
+                    <label>
+                        great
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="great"
+                            checked={visibility === "great"}
+                            onChange={({ target }) => setVisibility(target.value as Visibility)}
+                        />
+                    </label>
+                    <label>
+                        good
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="good"
+                            checked={visibility === "good"}
+                            onChange={({ target }) => setVisibility(target.value as Visibility)}
+                        />
+                    </label>
+                    <label>
+                        ok
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="ok"
+                            checked={visibility === "ok"}
+                            onChange={({ target }) => setVisibility(target.value as Visibility)}
+                        />
+                    </label>
+                    <label>
+                        poor
+                        <input
+                            type="radio"
+                            name="visibility"
+                            value="poor"
+                            checked={visibility === "poor"}
+                            onChange={({ target }) => setVisibility(target.value as Visibility)}
+                        />
+                    </label>
                 </div>
 
                 <div>
-                    weather
-                    <input value={weather} onChange={(event) => setWeather(event.target.value)} />
+                    weather:
+                    <label>
+                        sunny
+                        <input
+                            type="radio"
+                            name="weather"
+                            value="sunny"
+                            checked={weather === "sunny"}
+                            onChange={({ target }) => setWeather(target.value as Weather)}
+                        />
+                    </label>
+                    <label>
+                        rainy
+                        <input
+                            type="radio"
+                            name="weather"
+                            value="rainy"
+                            checked={weather === "rainy"}
+                            onChange={({ target }) => setWeather(target.value as Weather)}
+                        />
+                    </label>
+                    <label>
+                        cloudy
+                        <input
+                            type="radio"
+                            name="weather"
+                            value="cloudy"
+                            checked={weather === "cloudy"}
+                            onChange={({ target }) => setWeather(target.value as Weather)}
+                        />
+                    </label>
+                    <label>
+                        stormy
+                        <input
+                            type="radio"
+                            name="weather"
+                            value="stormy"
+                            checked={weather === "stormy"}
+                            onChange={({ target }) => setWeather(target.value as Weather)}
+                        />
+                    </label>
+                    <label>
+                        windy
+                        <input
+                            type="radio"
+                            name="weather"
+                            value="windy"
+                            checked={weather === "windy"}
+                            onChange={({ target }) => setWeather(target.value as Weather)}
+                        />
+                    </label>
                 </div>
 
                 <div>
                     comment
-                    <input value={comment} onChange={(event) => setComment(event.target.value)} />
+                    <input value={comment} onChange={({ target }) => setComment(target.value)} />
                 </div>
 
                 <button type="submit">add</button>
