@@ -11,15 +11,25 @@ interface Props {
     diagnoses: Diagnosis[];
 }
 
+type EntryType = "HealthCheck" | "Hospital" | "OccupationalHealthcare";
+
 const PatientPage = ({ diagnoses }: Props) => {
     const [patient, setPatient] = useState<Patient | null>(null);
     const { id } = useParams<{ id: string }>();
 
+    const [entryType, setEntryType] = useState<EntryType>("HealthCheck");
     const [description, setDescription] = useState("");
     const [date, setDate] = useState("");
     const [specialist, setSpecialist] = useState("");
-    const [healthCheckRating, setHealthCheckRating] = useState("");
     const [diagnosisCodes, setDiagnosisCodes] = useState("");
+
+    const [healthCheckRating, setHealthCheckRating] = useState("");
+    const [dischargeDate, setDischargeDate] = useState("");
+    const [dischargeCriteria, setDischargeCriteria] = useState("");
+    const [employerName, setEmployerName] = useState("");
+    const [sickLeaveStartDate, setSickLeaveStartDate] = useState("");
+    const [sickLeaveEndDate, setSickLeaveEndDate] = useState("");
+
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -42,14 +52,58 @@ const PatientPage = ({ diagnoses }: Props) => {
             return;
         }
 
-        const newEntry: EntryWithoutId = {
-            type: "HealthCheck",
-            description,
-            date,
-            specialist,
-            healthCheckRating: Number(healthCheckRating) as HealthCheckRating,
-            diagnosisCodes: diagnosisCodes ? diagnosisCodes.split(",").map((code) => code.trim()) : [],
-        };
+        const diagnosisCodesArray = diagnosisCodes ? diagnosisCodes.split(",").map((code) => code.trim()) : [];
+
+        let newEntry: EntryWithoutId;
+
+        switch (entryType) {
+            case "HealthCheck":
+                newEntry = {
+                    type: "HealthCheck",
+                    description,
+                    date,
+                    specialist,
+                    diagnosisCodes: diagnosisCodesArray,
+                    healthCheckRating: Number(healthCheckRating) as HealthCheckRating,
+                };
+                break;
+
+            case "Hospital":
+                newEntry = {
+                    type: "Hospital",
+                    description,
+                    date,
+                    specialist,
+                    diagnosisCodes: diagnosisCodesArray,
+                    discharge: {
+                        date: dischargeDate,
+                        criteria: dischargeCriteria,
+                    },
+                };
+                break;
+
+            case "OccupationalHealthcare":
+                newEntry = {
+                    type: "OccupationalHealthcare",
+                    description,
+                    date,
+                    specialist,
+                    diagnosisCodes: diagnosisCodesArray,
+                    employerName,
+                    ...(sickLeaveStartDate && sickLeaveEndDate
+                        ? {
+                              sickLeave: {
+                                  startDate: sickLeaveStartDate,
+                                  endDate: sickLeaveEndDate,
+                              },
+                          }
+                        : {}),
+                };
+                break;
+
+            default:
+                throw new Error("Unsupported entry type");
+        }
 
         try {
             const createdEntry = await patientService.addEntry(patient.id, newEntry);
@@ -59,11 +113,17 @@ const PatientPage = ({ diagnoses }: Props) => {
                 entries: patient.entries.concat(createdEntry),
             });
 
+            setEntryType("HealthCheck");
             setDescription("");
             setDate("");
             setSpecialist("");
-            setHealthCheckRating("");
             setDiagnosisCodes("");
+            setHealthCheckRating("");
+            setDischargeDate("");
+            setDischargeCriteria("");
+            setEmployerName("");
+            setSickLeaveStartDate("");
+            setSickLeaveEndDate("");
             setError("");
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
@@ -91,11 +151,27 @@ const PatientPage = ({ diagnoses }: Props) => {
             <div>ssn: {patient.ssn}</div>
             <div>occupation: {patient.occupation}</div>
 
-            <h3>New HealthCheck entry</h3>
+            <h3>New entry</h3>
 
             {error && <div style={{ color: "red" }}>{error}</div>}
 
-            <form onSubmit={submitNewEntry}>
+            <form
+                onSubmit={submitNewEntry}
+                style={{
+                    border: "1px dashed black",
+                    padding: "1em",
+                    marginBottom: "1em",
+                }}
+            >
+                <div>
+                    type
+                    <select value={entryType} onChange={({ target }) => setEntryType(target.value as EntryType)}>
+                        <option value="HealthCheck">HealthCheck</option>
+                        <option value="Hospital">Hospital</option>
+                        <option value="OccupationalHealthcare">OccupationalHealthcare</option>
+                    </select>
+                </div>
+
                 <div>
                     description
                     <input value={description} onChange={({ target }) => setDescription(target.value)} />
@@ -112,14 +188,46 @@ const PatientPage = ({ diagnoses }: Props) => {
                 </div>
 
                 <div>
-                    healthCheckRating
-                    <input value={healthCheckRating} onChange={({ target }) => setHealthCheckRating(target.value)} />
-                </div>
-
-                <div>
                     diagnosis codes
                     <input value={diagnosisCodes} onChange={({ target }) => setDiagnosisCodes(target.value)} placeholder="e.g. Z57.1, N30.0" />
                 </div>
+
+                {entryType === "HealthCheck" && (
+                    <div>
+                        healthCheckRating
+                        <input value={healthCheckRating} onChange={({ target }) => setHealthCheckRating(target.value)} />
+                    </div>
+                )}
+
+                {entryType === "Hospital" && (
+                    <>
+                        <div>
+                            discharge date
+                            <input value={dischargeDate} onChange={({ target }) => setDischargeDate(target.value)} placeholder="YYYY-MM-DD" />
+                        </div>
+                        <div>
+                            discharge criteria
+                            <input value={dischargeCriteria} onChange={({ target }) => setDischargeCriteria(target.value)} />
+                        </div>
+                    </>
+                )}
+
+                {entryType === "OccupationalHealthcare" && (
+                    <>
+                        <div>
+                            employer name
+                            <input value={employerName} onChange={({ target }) => setEmployerName(target.value)} />
+                        </div>
+                        <div>
+                            sick leave start date
+                            <input value={sickLeaveStartDate} onChange={({ target }) => setSickLeaveStartDate(target.value)} placeholder="YYYY-MM-DD" />
+                        </div>
+                        <div>
+                            sick leave end date
+                            <input value={sickLeaveEndDate} onChange={({ target }) => setSickLeaveEndDate(target.value)} placeholder="YYYY-MM-DD" />
+                        </div>
+                    </>
+                )}
 
                 <button type="submit">add</button>
             </form>
