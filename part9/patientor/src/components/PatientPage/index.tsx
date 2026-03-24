@@ -142,6 +142,7 @@ const PatientPage = ({ diagnoses }: Props) => {
         return <div>Loading...</div>;
     }
 
+    
     return (
         <div>
             <h2>
