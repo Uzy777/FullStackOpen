@@ -1,6 +1,6 @@
 import express from "express";
 import patientsService from "../services/patientsService";
-import { toNewPatient } from "../utils";
+import { toNewEntry, toNewPatient } from "../utils";
 
 const router = express.Router();
 
@@ -23,6 +23,16 @@ router.post("/", (req, res) => {
         const newPatient = toNewPatient(req.body);
         const addedPatient = patientsService.addPatient(newPatient);
         res.json(addedPatient);
+    } catch (error) {
+        res.status(400).send(error instanceof Error ? error.message : "Invalid data");
+    }
+});
+
+router.post("/:id/entries", (req, res) => {
+    try {
+        const newEntry = toNewEntry(req.body);
+        const addedEntry = patientsService.addEntry(req.params.id, newEntry);
+        res.json(addedEntry);
     } catch (error) {
         res.status(400).send(error instanceof Error ? error.message : "Invalid data");
     }
