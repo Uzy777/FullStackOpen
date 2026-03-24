@@ -33,7 +33,26 @@ const PatientPage = () => {
             <div>occupation: {patient.occupation}</div>
 
             <h3>entries</h3>
-            {patient.entries.length === 0 ? <div>No entries</div> : null}
+
+            {patient.entries.length === 0 ? (
+                <div>No entries</div>
+            ) : (
+                patient.entries.map((entry) => (
+                    <div key={entry.id}>
+                        <div>
+                            <strong>{entry.date}</strong>
+                        </div>
+                        <div>{entry.description}</div>
+                        {entry.diagnosisCodes && (
+                            <ul>
+                                {entry.diagnosisCodes.map((code) => (
+                                    <li key={code}>{code}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                ))
+            )}
         </div>
     );
 };
