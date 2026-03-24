@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import patientService from "../../services/patients";
 import { Diagnosis, Gender, Patient } from "../../types";
+import EntryDetails from "../EntryDetails";
 
 interface Props {
     diagnoses: Diagnosis[];
@@ -42,28 +43,7 @@ const PatientPage = ({ diagnoses }: Props) => {
             {patient.entries.length === 0 ? (
                 <div>No entries</div>
             ) : (
-                patient.entries.map((entry) => (
-                    <div key={entry.id}>
-                        <div>
-                            <strong>{entry.date}</strong>
-                        </div>
-                        <div>{entry.description}</div>
-
-                        {entry.diagnosisCodes && (
-                            <ul>
-                                {entry.diagnosisCodes.map((code) => {
-                                    const diagnosis = diagnoses.find((d) => d.code === code);
-
-                                    return (
-                                        <li key={code}>
-                                            {code} {diagnosis ? diagnosis.name : ""}
-                                        </li>
-                                    );
-                                })}
-                            </ul>
-                        )}
-                    </div>
-                ))
+                patient.entries.map((entry) => <EntryDetails key={entry.id} entry={entry} diagnoses={diagnoses} />)
             )}
         </div>
     );
